@@ -66,6 +66,22 @@ a{color:inherit}
 .tb[aria-pressed="true"]{background:var(--wht);color:var(--blk);border-color:var(--wht)}
 .tb svg{width:16px;height:16px;flex:none}
 @media(max-width:900px){.tb .lbl{display:none}.tb{padding:.4rem .6rem}}
+.tb-menu{display:none}
+@media(max-width:640px){
+  .top{padding:10px 16px;background:rgba(10,10,10,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
+  .logo{width:92px}
+  .tb-menu{display:inline-flex;margin-left:auto;min-height:40px;padding:.4rem .9rem .4rem .75rem;gap:.55rem;font-weight:700;font-size:.9rem}
+  .hb{display:inline-flex;flex-direction:column;gap:3.5px;width:16px}.hb i{display:block;height:2px;border-radius:2px;background:currentColor;transition:transform .3s var(--ease),opacity .2s}
+  .top.menu-open .hb i:nth-child(1){transform:translateY(5.5px) rotate(45deg)}.top.menu-open .hb i:nth-child(2){opacity:0}.top.menu-open .hb i:nth-child(3){transform:translateY(-5.5px) rotate(-45deg)}
+  .tools{position:absolute;top:calc(100% + 8px);right:12px;left:auto;width:min(290px,calc(100vw - 24px));margin:0;flex-direction:column;gap:.35rem;padding:.5rem;border-radius:20px;
+    background:rgba(18,18,18,.97);border:1px solid rgba(255,255,255,.14);box-shadow:0 24px 60px -20px rgba(0,0,0,.8);
+    opacity:0;transform:translateY(-8px) scale(.98);transform-origin:top right;pointer-events:none;visibility:hidden;transition:opacity .25s var(--ease),transform .25s var(--ease),visibility 0s .25s}
+  .top.menu-open .tools{opacity:1;transform:none;pointer-events:auto;visibility:visible;transition:opacity .25s var(--ease),transform .25s var(--ease)}
+  .tools .tb{width:100%;min-height:48px;justify-content:flex-start;gap:.75rem;padding:.6rem .9rem;border-radius:14px;border-color:transparent;background:rgba(255,255,255,.06);font-size:.95rem}
+  .tools .tb .lbl{display:inline}
+  .tools .tb[aria-pressed="true"]{background:rgba(199,177,255,.18)}
+  .tools .tb[hidden]{display:none}
+}
 @media(max-width:640px){.prog{position:fixed;top:64px;left:0;right:0;gap:.3rem}.pchip{width:28px;height:28px;font-size:.7rem;border-radius:8px}}
 
 /* ===== ÉCRANS ===== */
@@ -235,6 +251,8 @@ legend{display:block;width:100%;padding:0}
 .obadge{flex:none;font-size:.74rem;font-weight:700;letter-spacing:.04em;padding:.25rem .55rem;border-radius:100px;background:rgba(10,10,10,.08);white-space:nowrap}
 .obadge.inc{background:var(--grn);color:var(--blk);border:1.5px solid var(--blk)}
 .opt:has(input:checked) .obadge{background:var(--cc);color:var(--blk)}
+@media(max-width:560px){.opt .in{gap:.65rem;min-height:54px;padding:.7rem .75rem}.opt .key{width:26px;height:26px;border-radius:8px;font-size:.78rem}.opt .txt b{font-size:.98rem;line-height:1.28}.opt .txt small{font-size:.84rem}.opt .tick{width:22px;height:22px}.opt .tick svg{width:12px;height:12px}.opt:has(input:not(:checked)) .tick{width:0;margin-left:-.65rem}}
+@media(max-width:360px){.qcard{padding-left:16px;padding-right:16px}.cta{padding:.8rem 1.1rem;gap:.5rem;font-size:.9rem;white-space:normal;text-align:center;line-height:1.2}.cta.big{padding:.9rem 1.1rem;font-size:.95rem;white-space:normal}}
 .opt.lock{cursor:default}
 .opt.lock .in::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent 0 10px,rgba(255,255,255,.05) 10px 20px);pointer-events:none}
 .opts.two .opt.excl{grid-column:1/-1}
@@ -759,7 +777,8 @@ html.nomo .flow li span,html.nomo .flow li+li::before{animation:none}
 .rm-row{display:flex;gap:.5rem}.rm-row input{flex:1;min-width:0;min-height:48px;padding:.6rem .9rem;border-radius:14px;border:1.5px solid #0A0A0A;font:inherit;background:#FFFFFF}
 .rm-go{flex:none;min-height:48px;padding:.6rem 1.2rem;border-radius:100px;border:none;background:#0A0A0A;color:#FFFFFF;font-weight:700;cursor:pointer;white-space:nowrap}
 .rm-e{color:#A3200F;font-weight:600;font-size:.85rem;margin-top:.4rem}.rm-e:empty,.rm-s:empty{display:none}
-.rm-s{margin-top:.5rem;font-weight:600;font-size:.9rem}
+.rm-s{margin-top:.5rem;font-weight:600;font-size:.9rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem}.rm-s .snd-bar{flex-basis:100%;margin-top:.3rem;background:rgba(10,10,10,.1)}.rm-s.done{color:#1F7A12}
+.snd-spin.sm{width:18px;height:18px;border-width:2.5px;border-color:rgba(10,10,10,.15);border-top-color:#5B3FD1;margin:0}
 .rm-dl{margin-top:.4rem;border:none;background:none;padding:.4rem 0;font-size:.85rem;text-decoration:underline;cursor:pointer;color:#0A0A0A;min-height:36px}
 .rm-form.busy .rm-go{opacity:.5;pointer-events:none}
 @media(max-width:400px){.rm-row{flex-direction:column}.rm-go{width:100%}}
@@ -895,7 +914,8 @@ html.nomo .vx.arm .vo-in,html.nomo .vx.arm .vo-me,html.nomo .vx.arm .vo-ln,html.
 .sgo-r{display:flex;gap:.4rem;flex:none}
 .sgo-b{display:inline-flex;align-items:center;min-height:44px;padding:.5rem 1.1rem;border-radius:100px;font-weight:700;font-size:.9rem;text-decoration:none;white-space:nowrap}
 .sgo-gold{background:linear-gradient(135deg,#F7E7B0,#D4AF37 55%,#E9C969);color:#0A0A0A}.sgo-ghost{color:#FFFFFF;border:1.5px solid rgba(255,255,255,.35)}.sgo-ghost:hover{background:#FFFFFF;color:#0A0A0A}
-@media(max-width:560px){.sgo{bottom:10px}.sgo-in{border-radius:22px;padding:.5rem .5rem .5rem .8rem}.sgo-ghost{display:none}.sgo-p s.was{display:none}.sgo-f{font-size:.85rem}}
+@media(max-width:560px){.sgo{bottom:max(8px,env(safe-area-inset-bottom))}.sgo-in{border-radius:18px;padding:.4rem .4rem .4rem .75rem}.sgo-l{gap:.15rem .5rem}.sgo-ghost{display:none}.sgo-p s.was{display:none}.sgo-f{font-size:.8rem}.sgo-p{font-size:.78rem}.sgo-p b{font-size:.92rem}.sgo-b{min-height:42px;padding:.45rem 1rem;font-size:.88rem}}
+body.sgo-pad #result{padding-bottom:84px}
 @media print{.sgo{display:none}}
 html.nomo .sgo{transition:none}
 .fn.has-img{isolation:isolate;overflow:hidden}
@@ -1618,7 +1638,34 @@ tfoot td,tfoot th{border-top:1.5px solid rgba(255,255,255,.15);padding:1rem;vert
 .consent{display:flex;gap:.7rem;align-items:flex-start;font-size:.9rem;cursor:pointer}
 .consent input{width:22px;height:22px;flex:none;margin-top:2px;accent-color:var(--blk)}
 .ok-msg{padding:1.2rem;border-radius:18px;background:var(--blk);color:var(--wht);animation:tipIn .7s var(--ease)}
+.ok-msg.sending{display:flex;gap:1rem;align-items:flex-start}
+#formZone:has(.ok-msg){display:flex;flex-direction:column;justify-content:center}
+.snd-spin{flex:none;width:26px;height:26px;border-radius:50%;border:3px solid rgba(255,255,255,.25);border-top-color:#FFFF7D;animation:sndRot .8s linear infinite;margin-top:.1rem}
+.snd-bar{display:block;margin-top:.8rem;height:4px;border-radius:4px;background:rgba(255,255,255,.15);overflow:hidden}
+.snd-bar i{display:block;height:100%;width:40%;border-radius:4px;background:linear-gradient(90deg,#C7B1FF,#FFFF7D);animation:sndBar 1.4s ease-in-out infinite}
+@keyframes sndRot{to{transform:rotate(360deg)}}
+@keyframes sndBar{0%{transform:translateX(-100%)}100%{transform:translateX(250%)}}
+@media (prefers-reduced-motion:reduce){.snd-spin{animation-duration:2.4s}.snd-bar i{animation:none;width:100%;opacity:.5}}
 .ok-msg b{color:var(--yel)}
+/* Notification de succès */
+.okc{flex:none;margin:0!important;display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:#22C55E;box-shadow:0 0 0 6px rgba(34,197,94,.22),0 12px 28px -8px rgba(34,197,94,.7);animation:okPop .55s cubic-bezier(.34,1.56,.64,1) both}
+.okc svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
+.okc svg path{stroke:#fff!important;fill:none!important;stroke-dasharray:30;stroke-dashoffset:0;animation:okDraw .45s .2s ease-out backwards}
+.okc svg{display:block;margin:auto}.okc.sm{width:34px;height:34px;min-width:34px;box-shadow:0 0 0 4px rgba(34,197,94,.2)}.okc.sm svg{width:19px!important;height:19px!important;stroke-width:3.6}
+@keyframes okPop{0%{transform:scale(.3);opacity:0}100%{transform:none;opacity:1}}
+@keyframes okDraw{from{stroke-dashoffset:30}to{stroke-dashoffset:0}}
+.ok-msg.good{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.9rem;padding:1.8rem 1.4rem;background:#fff;color:#0A0A0A;border:2px solid #22C55E;box-shadow:0 24px 60px -24px rgba(34,197,94,.55)}
+.ok-msg.good .okt{font-weight:800;font-size:1.25rem;line-height:1.25;color:#0A0A0A}
+.ok-msg.good .okd{font-weight:500;font-size:1rem;line-height:1.45;color:#14532D;margin:0}
+.ok-msg.good .okd b{color:#15803D;font-weight:800}
+.rm-s.done{display:flex;flex-wrap:nowrap;align-items:center;gap:.75rem;margin-top:.8rem;padding:.8rem .9rem;border-radius:14px;background:#F0FDF4;border:2px solid #22C55E;color:#14532D}
+.rm-s.done strong{display:block;font-weight:800;color:#0A0A0A;font-size:.98rem}.rm-s.done span.t{font-weight:600;font-size:.88rem;line-height:1.35}
+.okn{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 14px);z-index:9999;width:min(440px,calc(100vw - 24px));display:flex;align-items:center;gap:.9rem;padding:.9rem 1rem;border-radius:18px;background:#fff;color:#0A0A0A;border:2px solid #22C55E;box-shadow:0 22px 50px -14px rgba(0,0,0,.55);transform:translate(-50%,-130%);opacity:0;transition:transform .5s cubic-bezier(.16,1,.3,1),opacity .35s}
+.okn.on{transform:translate(-50%,0);opacity:1}
+.okn b{display:block;font-weight:800;font-size:1rem;line-height:1.25}.okn div>span{display:block;font-weight:600;font-size:.88rem;line-height:1.35;color:#14532D;margin-top:.15rem}
+.okn .okx{margin-left:auto;flex:none;width:32px;height:32px;border:0;border-radius:50%;background:rgba(10,10,10,.06);color:#0A0A0A;font-size:1.1rem;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.okc,.okc path{animation:none;stroke-dashoffset:0}.okn{transition:opacity .2s}}
+
 .after{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:2rem;justify-content:center}
 .rules{margin-top:1.5rem;font-size:.85rem;color:rgba(255,255,255,.62);max-width:80ch}
 .rv{opacity:0;transform:translateY(40px) rotateX(-8deg);transition:opacity .9s var(--ease),transform 1s var(--ease);transition-delay:var(--d,0s)}
@@ -1644,7 +1691,8 @@ footer.foot{position:relative;z-index:1;text-align:center;padding:30px 20px 40px
 @media(max-width:640px){
   .top{flex-wrap:wrap;row-gap:10px;background:rgba(10,10,10,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding-bottom:10px}
   .prog{position:static;order:3;flex-basis:100%;display:none}.prog.on{display:flex}
-  #quiz.on{padding-top:128px}#result.on{padding-top:130px}
+  #quiz.on{padding-top:84px}#result.on{padding-top:96px}
+  .deck-hint{display:block;text-align:center;text-wrap:balance}
   .deck{height:300px}.fcard{width:150px;height:210px}.fc-name{font-size:1.2rem}.fc-tag{display:none}
   .deck .fcard:nth-child(1){left:2%;top:18%}.deck .fcard:nth-child(2){left:calc(50% - 75px);top:2%}.deck .fcard:nth-child(3){right:2%;top:22%}
   .herocard{min-height:400px}.herocard .fcard{width:min(330px,100%);min-height:360px}
@@ -1680,7 +1728,8 @@ html.nomo .rv{opacity:1;transform:none}
 <header class="top">
   <a class="logo" href="https://awone.fr/" aria-label="AWONE, retour au site"><svg aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 85.9127"><g><g><circle cx="485.3836" cy="68.2297" r="14.6164" style="fill:currentColor;"/><path d="M372.9026,28.2283c0,3.2216-.3059,6.5971-1.0739,10.2786l-9.0242,45.1229c-.105.5251-.5661.9031-1.1015.9031h-26.8609c-.7083,0-1.2398-.6475-1.1018-1.3422l8.3263-41.9221c.4599-1.9937.6139-3.8355.6139-5.5233,0-7.209-3.6836-11.0445-11.5065-11.0445-9.9727,0-16.8758,5.9832-19.4855,18.7155l-8.1012,40.2151c-.1056.5244-.5663.9015-1.1012.9015h-26.8613c-.7086,0-1.2402-.648-1.1017-1.3429L290.642,2.3006c.1067-.5354.5766-.9209,1.1225-.9209h25.2841c.7206,0,1.262.658,1.1231,1.3651l-1.0988,5.5944c-.1024.5213.5082.8749.9121.5299,7.1762-6.1295,16.1485-8.8692,24.8476-8.8692,17.7977,0,30.07,9.6647,30.07,28.2283Z" style="fill:currentColor;"/><path d="M462.5784,50.1674h-56.7175c-.4784,0-.8329.4319-.7572.9043,1.3743,8.5821,7.6239,12.5959,18.7468,12.5959,6.9596,0,13.7835-2.0564,19.1747-6.0375.5114-.3776,1.2367-.2386,1.5883.291l10.8545,16.3488c.3348.5043.2138,1.19-.2814,1.5382-10.2475,7.2065-22.3298,10.1045-34.5577,10.1045-26.6945,0-44.1842-14.7281-44.1842-37.893,0-27.6143,20.4033-48.0197,50.3193-48.0197,25.3147,0,40.9626,14.7281,40.9626,36.5132,0,3.581-.4075,6.9992-.9858,10.1941-.3634,2.0078-2.122,3.4601-4.1624,3.4601ZM407.4964,34.8254h32.7927c.3259,0,.5966-.2674.5916-.5932-.1323-8.537-6.3477-13.5209-15.4965-13.5209-9.5061,0-15.5614,5.4639-18.4435,13.3304-.1394.3805.1505.7837.5557.7837Z" style="fill:currentColor;"/><path d="M167.8122,1.3797c-5.0438,0-9.3769,3.5817-10.3261,8.5354l-6.8014,35.4969c-2.3017,11.6584-6.7512,16.7217-15.1901,16.7217-7.057,0-10.8925-3.3755-10.8925-11.0465,0-1.9937.308-4.1414.768-6.749l7.9628-41.2886c.167-.8661-.4966-1.6699-1.3786-1.6699h-25.6774c-.6725,0-1.2505.4768-1.3784,1.137l-8.3706,43.2013c-2.3017,11.5065-6.9031,16.4157-14.8821,16.4157-7.211,0-11.0465-3.3755-11.0465-11.0465,0-1.3709.1797-2.9215.4203-4.533.1092-.732.204-1.4495.3475-2.216l1.5581-7.9315C76.4894,18.263,62.6,1.3797,44.1095,1.3797H13.3155c-.4516,0-.8403.3189-.9286.7618l-2.9675,14.8922c-.6481,3.2524,1.84,6.2852,5.1563,6.2852h20.6264c6.09,0,10.6645,5.5608,9.4903,11.5365l-2.0137,10.2485c-.2714,1.3571-.4594,2.7064-.611,4.0364-.1915,1.6784-.3109,3.3218-.3109,4.8626,0,18.8694,13.0403,31.9097,35.7474,31.9097,9.9706,0,20.5572-2.9135,29.3021-11.3525,5.8292,7.519,15.3421,11.3525,26.6945,11.3525,23.9329,0,40.1948-11.8125,45.2581-38.507l8.8309-44.898c.1149-.5842-.3323-1.128-.9277-1.128h-18.85Z" style="fill:currentColor;"/><path d="M186.6621,1.3798h-18.8499c-5.0438,0-9.377,3.5817-10.3261,8.5354l-6.8014,35.4968c-2.3017,11.6585-6.7512,16.7218-15.1901,16.7218-7.0571,0-10.8926-3.3755-10.8926-11.0465,0-1.9937.308-4.1413.768-6.749l7.9628-41.2886c.1671-.8661-.4966-1.6699-1.3786-1.6699h-25.6774c-.6724,0-1.2504.4768-1.3783,1.137l-8.3706,43.2013c-2.3017,11.5064-6.9031,16.4157-14.8822,16.4157-7.211,0-11.0465-3.3755-11.0465-11.0465,0-1.3709.1797-2.9214.4203-4.533.1092-.732.204-1.4495.3476-2.216l1.5581-7.9315C76.4894,18.263,62.6,1.3798,44.1095,1.3798H13.3155c-.4516,0-.8403.3189-.9286.7617l-2.9675,14.8922c-.6481,3.2524,1.84,6.2852,5.1564,6.2852h20.6264c6.09,0,10.6645,5.5607,9.4903,11.5365l-2.0137,10.2485c-.2714,1.3571-.4594,2.7064-.611,4.0364-.1915,1.6784-.311,3.3218-.311,4.8626,0,18.8694,13.0404,31.9097,35.7474,31.9097,9.9706,0,20.5572-2.9136,29.3021-11.3525,5.8293,7.519,15.3421,11.3525,26.6945,11.3525,23.9329,0,40.1948-11.8125,45.2581-38.507l8.8308-44.898c.1149-.5842-.3323-1.1279-.9277-1.1279Z" style="fill:currentColor;"/><path d="M20.8858,46.7273c.0634-.5568.1302-1.0871.1991-1.6061-.2264-.0075-.4523-.0172-.6805-.0172-11.269,0-20.4044,9.1353-20.4044,20.4044s9.1353,20.4044,20.4044,20.4044c3.137,0,6.1077-.7097,8.7629-1.9745-5.682-8.5012-8.7296-18.8024-8.7296-29.9352,0-2.2534.1467-4.6345.4481-7.2757Z" style="fill:currentColor;"/><path d="M183.5731,48.0197c0-27.4624,21.3252-48.0197,51.0893-48.0197,26.5405,0,43.5702,14.8821,43.5702,37.741,0,27.6143-21.3252,48.1716-51.0893,48.1716-26.5405,0-43.5702-15.034-43.5702-37.893ZM248.6225,39.2748c0-9.6647-5.6773-15.9559-15.6479-15.9559-11.6605,0-19.7914,9.3588-19.7914,23.3189,0,9.6668,5.6773,15.804,15.6479,15.804,11.6605,0,19.7914-9.3588,19.7914-23.167Z" style="fill:currentColor;"/><path d="M186.6621,1.3798h-18.8499c-5.0439,0-9.377,3.5817-10.3261,8.5354l-6.8015,35.4968c-2.3017,11.6585-6.7511,16.7218-15.1901,16.7218-7.0571,0-10.8926-3.3755-10.8926-11.0465,0-1.9938.308-4.1414.768-6.749l7.9628-41.2886c.1671-.8661-.4966-1.6699-1.3786-1.6699h-25.6775c-.6724,0-1.2504.4768-1.3783,1.137l-8.3706,43.2013c-2.3017,11.5064-6.9031,16.4157-14.8822,16.4157-7.211,0-11.0464-3.3755-11.0464-11.0465,0-1.371.1797-2.9215.4203-4.5331.1093-.7319.204-1.4495.3476-2.216l1.5581-7.9315C76.4894,18.263,62.6,1.3798,44.1095,1.3798H13.3155c-.4516,0-.8403.3189-.9285.7616l-2.9676,14.8923c-.6481,3.2524,1.84,6.2852,5.1563,6.2852h20.6265c6.09,0,10.6644,5.5607,9.4903,11.5365l-2.0137,10.2485c-.2714,1.3571-.4594,2.7064-.6109,4.0364-.1915,1.6784-.3111,3.3218-.3111,4.8626,0,18.8694,13.0404,31.9097,35.7474,31.9097,9.9706,0,20.5573-2.9136,29.3021-11.3525,5.8293,7.519,15.3421,11.3525,26.6945,11.3525,23.9329,0,40.1948-11.8125,45.2582-38.507l8.8308-44.898c.115-.5842-.3322-1.1279-.9277-1.1279Z" style="fill:currentColor;"/></g></g></svg></a>
   <div class="prog" id="prog" aria-hidden="true"></div>
-  <div class="tools" role="group" aria-label="Réglages d'affichage">
+  <button class="tb tb-menu" id="tbMenu" type="button" aria-expanded="false" aria-controls="tools"><span class="hb" aria-hidden="true"><i></i><i></i><i></i></span><span>Menu</span></button>
+  <div class="tools" id="tools" role="group" aria-label="Réglages d'affichage">
     <button class="tb" id="tbText" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 18 9 6l5 12M5.8 14h6.4M16 18l3-7 3 7M17 16h4"/></svg><span class="lbl">Texte plus grand</span><span class="sr"> (agrandir le texte)</span></button>
     <button class="tb" id="tbRestart" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg><span class="lbl">Recommencer</span></button>
     <button class="tb" id="tbMotion" type="button" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg><span class="lbl">Animations</span></button>
@@ -3059,6 +3108,12 @@ async function reveal(){
 }
 
 /* ---------- Confettis ---------- */
+const OKSVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+function okNotif(title,text){ let n=document.getElementById("okn"); if(n) n.remove();
+  n=document.createElement("div"); n.id="okn"; n.className="okn"; n.setAttribute("role","status"); n.setAttribute("aria-live","assertive");
+  n.innerHTML=`<span class="okc sm">${OKSVG}</span><div><b>${title}</b><span>${text}</span></div><button type="button" class="okx" aria-label="Fermer la notification">×</button>`;
+  document.body.appendChild(n); requestAnimationFrame(()=>requestAnimationFrame(()=>n.classList.add("on")));
+  const close=()=>{ n.classList.remove("on"); setTimeout(()=>n.remove(),500); }; n.querySelector(".okx").onclick=close; setTimeout(close,7000); }
 function confetti(n=170,ox=.5,oy=.45){
   if(!motion) return;
   const cv=$("#confetti"), cx=cv.getContext("2d"); cv.width=innerWidth*devicePixelRatio; cv.height=innerHeight*devicePixelRatio; cx.scale(devicePixelRatio,devicePixelRatio);
@@ -3400,13 +3455,16 @@ function buildResult(E){
           <p class="rm-e" id="rmErr" role="alert"></p><p class="rm-s" id="rmState" aria-live="polite"></p><button type="button" class="rm-dl" id="rmDl">Ou télécharger le PDF</button></form></div>
       <p class="est-n"><b>Budget publicitaire minimum conseillé : 1 000 € / mois par plateforme (Meta ou Google)</b>, versé directement à la plateforme. Budget géré jusqu'à ${chosen===0?"2 500":"5 000"} € / mois ; au-delà, +100 € de gestion par tranche de 1 000 €). Abonnements aux outils et nom de domaine à votre charge. Les quantités indiquées sont des maximums.</p>`;
     const rm=$("#seoRm"); if(rm) rm.onclick=()=>{ A.seo=null; saveState(); cartRefresh(); say(seoMember()?"Retour au SEO Standard inclus dans votre formule.":"Option SEO retirée de votre accompagnement."); };
-    const rb=$("#rmBtn"), rf=$("#rmForm"); if(rb){ rb.onclick=()=>{ const o=rf.hidden; rf.hidden=!o; rb.setAttribute("aria-expanded",o); if(o){ const m=$("#rmMail"); const cm=$("#c-mail"); if(cm&&cm.value&&!m.value) m.value=cm.value; m.focus(); } };
+    const rb=$("#rmBtn"), rf=$("#rmForm"); if(rb){ rb.onclick=()=>{ const o=rf.hidden; rf.hidden=!o; if(o) prebuildPdf(E); rb.setAttribute("aria-expanded",o); if(o){ const m=$("#rmMail"); const cm=$("#c-mail"); if(cm&&cm.value&&!m.value) m.value=cm.value; m.focus(); } };
       const run=async(mode)=>{ const m=$("#rmMail"), er=$("#rmErr"), st=$("#rmState"); er.textContent=""; m.removeAttribute("aria-invalid");
         if(mode!=="download" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m.value.trim())){ er.textContent="Indiquez une adresse e-mail valide, par exemple nom@entreprise.fr."; m.setAttribute("aria-invalid","true"); m.focus(); return; }
-        rf.classList.add("busy"); st.textContent="Création de votre récap PDF…";
-        try{ const r=await recapPdf(E,chosen,mode,m.value.trim()); st.textContent = r.sent ? "C'est envoyé : votre récap arrive dans votre boîte mail." : "Votre récap PDF a été téléchargé."; }
-        catch(err){ st.textContent="La création du PDF n'a pas abouti. Vérifiez votre connexion et réessayez."; }
-        finally{ rf.classList.remove("busy"); } };
+        rf.classList.add("busy"); st.classList.remove("done");
+        st.innerHTML=`<span class="snd-spin sm" aria-hidden="true"></span><span>${mode==="download"?"Préparation de votre PDF…":"C'est noté ! Nous préparons et envoyons votre bilan…"}</span><span class="snd-bar" aria-hidden="true"><i></i></span>`;
+        const guard=e=>{ e.preventDefault(); e.returnValue=""; }; if(mode!=="download") addEventListener("beforeunload",guard);
+        try{ const r=await recapPdf(E,chosen,mode,m.value.trim()); st.classList.add("done"); if(r.sent){ st.innerHTML=`<span class="okc sm">${OKSVG}</span><span class="t"><strong>Votre demande a bien été prise en compte</strong>Votre PDF vous sera transmis par e-mail dans les prochaines minutes.</span>`; okNotif("Votre demande a bien été prise en compte","Votre PDF vous sera transmis par e-mail dans les prochaines minutes."); }
+          else { st.innerHTML=`<span class="okc sm">${OKSVG}</span><span class="t"><strong>Votre bilan PDF est téléchargé</strong>Retrouvez-le dans vos téléchargements.</span>`; } }
+        catch(err){ st.innerHTML="<span>L'envoi n'a pas abouti. Vérifiez votre connexion et réessayez.</span>"; }
+        finally{ rf.classList.remove("busy"); removeEventListener("beforeunload",guard); } };
       rf.onsubmit=ev=>{ ev.preventDefault(); run("mail"); }; $("#rmDl").onclick=()=>run("download"); }
     const pb=$("#payBtn"); magnet(pb);
     pb.addEventListener("click",async ev=>{ sendHook(E, chosen===2?"demande_devis":"clic_paiement", {formule_choisie:x.name, total_mensuel_ht:e.total});
@@ -3441,11 +3499,16 @@ function buildResult(E){
       <div class="sgo-r"><a class="sgo-b sgo-ghost" href="#talk" data-scroll>Échanger</a><a class="sgo-b sgo-gold" href="${rec<2?"#go":"#talk"}" data-scroll>${rec<2?"Démarrer":"Échanger avec AWONE"}</a></div></div>`;
     document.body.appendChild(bar);
     const hero=$(".rhero"), go=$("#go"), talk=$("#talk"); const vis=new Set();
-    const upd=()=>{ const heroOut=hero&&hero.getBoundingClientRect().bottom<0; const near=vis.size>0; bar.classList.toggle("on", $("#result").classList.contains("on") && heroOut && !near); };
+    let lastY=scrollY, hideDown=false;
+    const upd=()=>{ const heroOut=hero&&hero.getBoundingClientRect().bottom<0; const near=vis.size>0;
+      if(innerWidth<=640){ const dy=scrollY-lastY; if(Math.abs(dy)>6){ hideDown=dy>0; lastY=scrollY; } } else hideDown=false;
+      const on=$("#result").classList.contains("on") && heroOut && !near && !hideDown; bar.classList.toggle("on", on); document.body.classList.toggle("sgo-pad", on); };
     const io=new IntersectionObserver(es=>{ es.forEach(e=>{ e.isIntersecting?vis.add(e.target):vis.delete(e.target); }); upd(); },{threshold:0});
     [go,talk,...document.querySelectorAll("#result .prio-go,#result .faq-go,#result .fn4 .fn-ctas,#result .hero-ctas,#cmpTable,#hs.pin .funnel")].filter(Boolean).forEach(x=>io.observe(x)); addEventListener("scroll",upd,{passive:true}); upd(); })();
   $$("#result .cta").forEach(magnet);
   $("#contactForm").onsubmit=e=>{ e.preventDefault(); submitContact(E,AU,ES); };
+  $("#contactForm").addEventListener("focusin",()=>prebuildPdf(E));
+  { const t=$("#talk"); if(t && "IntersectionObserver" in window){ const io=new IntersectionObserver(en=>{ if(en.some(x=>x.isIntersecting)){ io.disconnect(); setTimeout(()=>prebuildPdf(E),1200); } },{rootMargin:"200px"}); io.observe(t); } }
   window.__last={E,AU,ES};
 }
 
@@ -3539,6 +3602,15 @@ document.addEventListener("click",async e=>{ const a=e.target.closest("a[data-ca
   try{ await Promise.race([loadCalendly(), new Promise((_,ko)=>setTimeout(()=>ko(new Error("délai")),6000))]);
     window.Calendly.initPopupWidget({url:CONFIG.bookingUrl+"?hide_gdpr_banner=1", prefill:{name:nom, email:mail}}); }
   catch(err){ window.open(CONFIG.bookingUrl,"_blank","noopener"); } });
+/* Menu mobile */
+(()=>{ const top=document.querySelector(".top"), btn=document.getElementById("tbMenu"), tools=document.getElementById("tools"); if(!btn) return;
+  const set=o=>{ top.classList.toggle("menu-open",o); btn.setAttribute("aria-expanded",o); };
+  btn.addEventListener("click",e=>{ e.stopPropagation(); set(!top.classList.contains("menu-open")); if(top.classList.contains("menu-open")){ const f=tools.querySelector(".tb:not([hidden])"); if(f) f.focus(); } });
+  tools.addEventListener("click",e=>{ const b=e.target.closest(".tb"); if(b && b.id!=="tbRestart" || (b && b.id==="tbRestart" && !b.classList.contains("warn"))) setTimeout(()=>set(false),180); });
+  document.addEventListener("click",e=>{ if(top.classList.contains("menu-open") && !e.target.closest(".top")) set(false); });
+  document.addEventListener("keydown",e=>{ if(e.key==="Escape" && top.classList.contains("menu-open")){ set(false); btn.focus(); } });
+  addEventListener("scroll",()=>{ if(top.classList.contains("menu-open")) set(false); },{passive:true});
+})();
 function track(statut,extra){
   if(!CONFIG.webhook || !A.sid || !(A.id&&A.id.email)) return;
   const q=QS[idx]||{}, shown=QS.filter(x=>!x.showIf||x.showIf(A)), pos=Math.max(1,shown.indexOf(q)+1);
@@ -3606,7 +3678,13 @@ function pdfBlocks(E,chosen){
     <p class="pcontact">${CONFIG.contactEmail} · <a href="${L.site}">awone.fr</a></p></div>`});
   return B;
 }
-async function buildPdf(E,chosen){
+/* Bilan PDF mis en cache : préparé en arrière-plan dès que le visiteur s'approche du formulaire */
+let pdfCache={key:"",p:null};
+function pdfKey(chosen){ try{ return chosen+"|"+JSON.stringify(A)+"|"+JSON.stringify(W)+"|"+seoSel()+"|"+SEOF; }catch(e){ return String(Math.random()); } }
+function buildPdf(E,chosen){ const k=pdfKey(chosen); if(pdfCache.key===k && pdfCache.p) return pdfCache.p;
+  const p=buildPdfRaw(E,chosen); pdfCache={key:k,p}; p.catch(()=>{ if(pdfCache.p===p) pdfCache={key:"",p:null}; }); return p; }
+function prebuildPdf(E){ try{ const ch=(window.__choice&&F.findIndex(x=>x.name===window.__choice.formule_choisie)); const run=()=>buildPdf(E,ch>=0?ch:E.rec).catch(()=>{}); (window.requestIdleCallback||setTimeout)(run,{timeout:1500}); }catch(e){} }
+async function buildPdfRaw(E,chosen){
   await loadPdfLib(); if(document.fonts&&document.fonts.ready) await document.fonts.ready;
   const W=794, H=1122, PAD=48, FOOT=40;
   const stage=document.createElement("div"); stage.className="pdf-host"; stage.setAttribute("aria-hidden","true"); const host=document.createElement("div"); host.className="pdf-doc"; stage.appendChild(host); document.body.appendChild(stage);
@@ -3620,8 +3698,8 @@ async function buildPdf(E,chosen){
   const tot=pages.filter(p=>!p.classList.contains("cover")).length; let n=0;
   pages.forEach(p=>{ const c=p.querySelector(".pp-n"); if(c){ n++; c.textContent=`${n} / ${tot}`; } });
   const name=`Recap-AWONE-${((A.id&&A.id.structure)||"diagnostic").replace(/[^\p{L}\p{N}]+/gu,"-").replace(/^-|-$/g,"")}.pdf`;
-  const opt={margin:0, filename:name, image:{type:"jpeg",quality:.9}, enableLinks:true,
-    html2canvas:{scale:2, useCORS:true, backgroundColor:"#FFFFFF", logging:false, scrollX:0, scrollY:0},
+  const opt={margin:0, filename:name, image:{type:"jpeg",quality:.88}, enableLinks:true,
+    html2canvas:{scale:1.6, useCORS:true, backgroundColor:"#FFFFFF", logging:false, scrollX:0, scrollY:0},
     jsPDF:{unit:"px", format:[W,H], orientation:"portrait", hotfixes:["px_scaling"], compress:true},
     pagebreak:{mode:[]}};
   try{ let w=html2pdf().set(opt).from(pages[0]).toPdf();
@@ -3640,7 +3718,7 @@ function sendHook(E,type,extra){
   if(!CONFIG.webhook) return Promise.resolve(false);
   const AU=audit(), ES=estimate(E.rec);
   const body=JSON.stringify({type, ...payload(E,AU,ES,extra||null)});
-  return fetch(CONFIG.webhook,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=UTF-8"},body}).then(()=>true).catch(()=>false);
+  return fetch(CONFIG.webhook,{method:"POST",mode:"no-cors",keepalive:body.length<60000,headers:{"Content-Type":"text/plain;charset=UTF-8"},body}).then(()=>true).catch(()=>false);
 }
 async function submitContact(E,AU,ES){
   const mail=$("#c-mail"), ok=$("#c-ok"); let bad=false;
@@ -3652,10 +3730,19 @@ async function submitContact(E,AU,ES){
   const who=esc(contact.nom.split(" ")[0]||"");
   if(CONFIG.webhook){
     contact.recap_client=!!($("#c-recap")&&$("#c-recap").checked);
-    { const sb=$("#talk button[type=submit]"); if(sb) sb.setAttribute("aria-busy","true");
-      try{ const ch=(window.__choice&&F.findIndex(x=>x.name===window.__choice.formule_choisie)); const r=await buildPdf(E,ch>=0?ch:E.rec); contact.pdf={nom:r.name, data:r.data}; }catch(err){} }
-    await sendHook(E,"demande_contact",contact);
-    $("#formZone").innerHTML=`<div class="ok-msg" role="status" tabindex="-1" id="okm"><b>Merci${who?" "+who:""} !</b><br>Votre diagnostic nous est bien parvenu. Nous revenons vers vous très vite${/récap/.test(contact.preference)?", et votre récap arrive par e-mail":""}.</div>`;
+    const zone=$("#formZone"), h0=zone.offsetHeight;
+    zone.style.minHeight=h0+"px";
+    zone.innerHTML=`<div class="ok-msg sending" role="status" aria-live="polite" tabindex="-1" id="okm"><span class="snd-spin" aria-hidden="true"></span><div><b>Merci${who?" "+who:""} !</b><br><span id="sndTxt">Nous envoyons votre demande${contact.recap_client?" et préparons votre bilan PDF":""}…</span><span class="snd-bar" aria-hidden="true"><i></i></span></div></div>`;
+    $("#okm").focus({preventScroll:true});
+    const guard=e=>{ e.preventDefault(); e.returnValue=""; }; addEventListener("beforeunload",guard);
+    try{ try{ const ch=(window.__choice&&F.findIndex(x=>x.name===window.__choice.formule_choisie)); const r=await buildPdf(E,ch>=0?ch:E.rec); contact.pdf={nom:r.name, data:r.data}; }catch(err){}
+      const t=$("#sndTxt"); if(t) t.textContent="Envoi en cours…";
+      await sendHook(E,"demande_contact",contact); }
+    finally{ removeEventListener("beforeunload",guard); }
+    const okT="Votre demande a bien été prise en compte", okD=`Merci${who?" "+who:""} ! Notre équipe revient vers vous <b>sous 48 h</b>.${contact.recap_client?" Votre PDF vous sera transmis par e-mail <b>dans les prochaines minutes</b>.":""}`;
+    zone.innerHTML=`<div class="ok-msg good" role="status" tabindex="-1" id="okm"><span class="okc">${OKSVG}</span><p class="okt">${okT}</p><p class="okd">${okD}</p></div>`;
+    okNotif(okT, contact.recap_client?"Votre PDF vous sera transmis dans les prochaines minutes.":"Notre équipe revient vers vous sous 48 h.");
+    zone.style.minHeight="";
   } else {
     const P=payload(E,AU,ES,contact);
     const body=[`Diagnostic AWONE — ${P.identite.structure||""}`,`Qualification : ${P.qualification}`,`Formule recommandée : ${P.recommandation} (fiabilité ${P.fiabilite} %)`,`Estimation : ${ES.total!=null?eur(ES.total)+" HT / mois":"Sur devis"}`,`Maturité : ${P.maturite}/100 · Chantiers : ${P.chantiers.join(", ")}`,"",
