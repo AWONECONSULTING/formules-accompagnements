@@ -292,6 +292,7 @@ legend{display:block;width:100%;padding:0}
 .duo.in .cl{animation:duoSpin 1.2s var(--spring) .3s both}
 @keyframes duoSpin{from{transform:rotateY(-540deg) scale(.4);opacity:0}to{transform:none;opacity:1}}
 .ids{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.6rem;align-items:start}
+.ids-n{margin:.9rem 0 0;font-size:.82rem;line-height:1.45;opacity:.75}
 @media(max-width:640px){.assoc{display:grid;gap:.5rem;margin-top:.6rem;perspective:600px}
 .assoc-r{display:flex;gap:.5rem;align-items:center}
 .assoc-r input{flex:1;width:100%;background:rgba(255,255,255,.78);border:1.5px solid var(--blk);border-radius:12px;padding:.75rem .9rem;color:var(--blk);font-size:1rem;outline:none;transition:box-shadow .3s}
@@ -1758,7 +1759,7 @@ html.nomo .rv{opacity:1;transform:none}
    Réglages modifiables sans toucher au reste du code.
    ========================================================================= */
 const CONFIG = {
-  webhook: "",            // URL qui reçoit les réponses en JSON (Make, Zapier, n8n, CRM…). Vide = rien n'est envoyé automatiquement.
+  webhook: "https://script.google.com/macros/s/AKfycbyaQ9J0cZ7qVeBSEEvSyKNHmjGPXBRc-fjj4Ph73YMuYdRE5GBfcs9fgUalHDZmKf5rig/exec",            // URL qui reçoit les réponses en JSON (Make, Zapier, n8n, CRM…). Vide = rien n'est envoyé automatiquement.
   bookingUrl: "",         // Lien iClosed (prise de rendez-vous). Vide = bouton masqué.
   checkoutEndpoint: "",   // À terme : fonction serveur (Make / Netlify / Vercel) qui reçoit le panier en JSON et renvoie {url} d'une session Stripe Checkout. Vide = liens de paiement ci-dessous.
   // Lien de paiement de démarrage (1 500 €, déduits de la première mensualité) : le même pour Croissance et Croissance 360.
@@ -1823,10 +1824,10 @@ const QS = [
  {id:"secteur", ch:0, type:"single", q:"Dans quel secteur évolue votre entreprise ?",
   opts:[{t:"BTP, construction & industrie"},{t:"Services, conseil & high-ticket",s:"Prestations à forte valeur"},{t:"High-tech & technologie"},{t:"E-commerce & marques"},{t:"Autre secteur",hide:1}],
   other:{label:"Autre secteur ?", ph:"Précisez votre activité"}},
- {id:"statut", ch:0, type:"single", q:A=>{ const e=S(A); return `Comment est organisée ${e||"votre entreprise"} ?`; },
+ {id:"statut", ch:0, type:"single", qh:"Comment est organisée votre entreprise ?", q:A=>{ const e=S(A); return `Comment est organisée ${e||"votre entreprise"} ?`; },
   opts:[{t:"Vous êtes une entreprise indépendante"},{t:"Vous êtes franchisé",s:"Vous exploitez une enseigne",tip:"Nous travaillons dans le respect de la charte et des règles de communication de l'enseigne."},{t:"Vous êtes franchiseur",s:"Vous développez un réseau",l:1,w:3,tip:"Nous pouvons travailler à l'échelle du réseau : image, outils et méthodes partagés."},{t:"Vous êtes un groupe ou un réseau d'établissements",l:1,w:3}],
   row:"Organisation de l'entreprise", vals:["Entreprise indépendante","Réseau accompagné","Sur mesure"]},
- {id:"etab", ch:0, type:"single", q:A=>{ const n=NAMES(); return `${n.length?joinNames(n)+", c":"C"}ombien d'établissements avez-vous ?`; }, sub:"Sièges, agences, boutiques, showrooms…", count:{label:"Combien exactement ?", when:a=>a===1||a===2, range:a=>a===2?[6,50]:[2,5]},
+ {id:"etab", ch:0, type:"single", qh:"Combien d'établissements avez-vous ?", q:A=>{ const n=NAMES(); return `${n.length?joinNames(n)+", c":"C"}ombien d'établissements avez-vous ?`; }, sub:"Sièges, agences, boutiques, showrooms…", count:{label:"Combien exactement ?", when:a=>a===1||a===2, range:a=>a===2?[6,50]:[2,5]},
   count:{when:a=>a===1||a===2, range:a=>a===1?[2,5]:[6,50], label:"Combien exactement ?"},
   row:"Établissements accompagnés", vals:["1 (ou 2 sous une même stratégie)","Jusqu'à 2 (ou 5 sous une même stratégie)","Sur mesure"],
   opts:[{t:"1 établissement"},{t:"2 à 5 établissements"},{t:"Plus de 5 établissements"},{t:"Aucun, activité 100 % en ligne"}]},
@@ -2255,7 +2256,10 @@ function bodyHTML(q){
     return `<div class="ids"><div class="fld"><label for="f-prenom">Votre prénom <span class="req">Obligatoire</span></label><input id="f-prenom" aria-required="true" autocomplete="given-name" value="${esc(v.prenom||"")}" placeholder="Ex. : Thomas">
         <div class="assoc" id="assocList" aria-live="polite">${(v.associes||[]).map((n,k)=>assocRow(k,n)).join("")}</div>
         <button type="button" class="add-b" id="addAssoc"><span aria-hidden="true">+</span> Ajouter un associé</button></div>
-      <div class="fld"><label for="f-struct">Le nom de l'entreprise <span class="req">Obligatoire</span></label><input id="f-struct" aria-required="true" autocomplete="organization" value="${esc(v.structure||"")}" placeholder="Ex. : Groupe Bâtir Sud"></div></div>`; }
+      <div class="fld"><label for="f-struct">Le nom de l'entreprise <span class="req">Obligatoire</span></label><input id="f-struct" aria-required="true" autocomplete="organization" value="${esc(v.structure||"")}" placeholder="Ex. : Groupe Bâtir Sud"></div>
+      <div class="fld"><label for="f-mail">Votre e-mail <span class="req">Obligatoire</span></label><input id="f-mail" type="email" inputmode="email" aria-required="true" autocomplete="email" value="${esc(v.email||"")}" placeholder="nom@entreprise.fr"></div>
+      <div class="fld"><label for="f-tel">Votre téléphone <span class="req">Obligatoire</span></label><input id="f-tel" type="tel" inputmode="tel" aria-required="true" autocomplete="tel" value="${esc(v.tel||"")}" placeholder="06 12 34 56 78"></div></div>
+      <p class="ids-n">Vos coordonnées servent uniquement à vous envoyer votre bilan et à revenir vers vous. Jamais revendues.</p>`; }
   if(q.type==="stepper"){ const v=A[q.id]||1;
     return `<div class="stepper"><button type="button" class="stp-b" id="stMinus" aria-label="Retirer un accès">−</button>
       <div class="stp-v"><output id="stVal" for="stMinus stPlus" aria-live="polite">${v}</output><small>${v>1?"personnes":"personne"}</small></div>
@@ -2453,6 +2457,8 @@ function validate(q){
   if(q.type==="multi" && !(A[q.id]||[]).length) msg="Choisissez au moins une réponse pour continuer.";
   if(!msg && (CONFIG.whyRequired||(q.why&&q.why.req)) && q.why && q.why.when(A[q.id]) && !(W[q.id]||"").trim()) msg="Ce champ est obligatoire : quelques mots suffisent.";
   if(!msg && q.type==="identity" && (!A.id.prenom || !A.id.structure)) msg="Indiquez votre prénom et le nom de l'entreprise pour continuer.";
+  if(!msg && q.type==="identity" && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(A.id.email||"")){ msg="Indiquez une adresse e-mail valide, par exemple nom@entreprise.fr."; const i=$("#f-mail"); if(i) i.setAttribute("aria-invalid","true"); }
+  if(!msg && q.type==="identity" && (String(A.id.tel||"").replace(/\D/g,"").length<9 || !/^[+\d\s.\-()]+$/.test(A.id.tel))){ msg="Indiquez un numéro de téléphone valide, par exemple 06 12 34 56 78."; const i=$("#f-tel"); if(i) i.setAttribute("aria-invalid","true"); }
   if(!msg && q.url && q.url.when(A[q.id]) && !(A.univers&&A.univers.url)) msg="Indiquez l'adresse de votre site pour continuer.";
   if(!msg && q.comm && q.comm.when(A[q.id]) && A.etabComm==null) msg="Indiquez si vos établissements communiquent de la même façon.";
   if(!msg && q.accounts && !Object.keys(A.socials||{}).length && !A.noSocials) msg="Indiquez au moins un compte, ou cochez « Je n'ai encore aucun compte ».";
@@ -2461,7 +2467,7 @@ function validate(q){
 }
 async function next(){
   if(busy) return; const q=QS[idx];
-  if(q.type==="identity"){ A.id={prenom:$("#f-prenom").value.trim(), structure:$("#f-struct").value.trim(), associes:$$(".as-in").map(i=>i.value.trim()).filter(Boolean)}; }
+  if(q.type==="identity"){ A.id={prenom:$("#f-prenom").value.trim(), structure:$("#f-struct").value.trim(), email:$("#f-mail").value.trim(), tel:$("#f-tel").value.trim(), associes:$$(".as-in").map(i=>i.value.trim()).filter(Boolean)}; ["#f-mail","#f-tel"].forEach(k=>$(k).removeAttribute("aria-invalid")); if(!A.sid) A.sid=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)); }
   const ta=$("#qcard .why textarea"); if(ta){ const wrap=ta.closest(".why"); W[q.id] = (q.type==="text"||wrap.classList.contains("open")) ? ta.value.trim() : ""; }
   if(q.accounts){ A.socials={}; NETS.forEach(n=>{ const v=$("#net-"+n.k).value.trim(); if(v) A.socials[n.k]=v; }); }
   if(q.growth && A.ca!=null && !A.croissance) A.croissance=20;
@@ -2475,7 +2481,7 @@ async function next(){
   if("speechSynthesis" in window) speechSynthesis.cancel();
   busy=true; clearTimeout(autoT);
   let n=idx+1; while(n<QS.length && QS[n].showIf && !QS[n].showIf(A)) n++;
-  if(n<QS.length){ idx=n; saveState(); await renderQ(1); } else { saveState({done:true}); await reveal(); }
+  if(n<QS.length){ idx=n; saveState(); track("progression"); await renderQ(1); } else { saveState({done:true}); await reveal(); }
   busy=false;
 }
 async function back(){
@@ -3022,6 +3028,7 @@ function estimate(rec, withSeo=true){
 async function reveal(){
   $("#pbar").style.setProperty("--p",1); $$(".pchip").forEach(c=>{c.classList.add("done");c.classList.remove("cur")});
   const E=engine();
+  track("termine",{recommandation:F[E.rec].name});
   show("reveal");
   say("Analyse de vos réponses en cours.");
   $(".stage3d").classList.remove("pop"); const ring=$("#ring"); ring.innerHTML=[0,1,2].map(i=>fcard(i,null,true)).join("");
@@ -3354,8 +3361,8 @@ function buildResult(E){
         ${CONFIG.bookingUrl?`<p style="margin-top:1.4rem"><a class="cta dark" href="${CONFIG.bookingUrl}" target="_blank" rel="noopener">Réserver un créneau ${ICON.next}</a></p>`:""}</div>
       <div id="formZone"><form id="contactForm" novalidate>
         <div class="fld"><label for="c-nom">Prénom et nom</label><input id="c-nom" autocomplete="name" value="${esc(A.id&&A.id.prenom||"")}"></div>
-        <div class="fld"><label for="c-mail">E-mail <span aria-hidden="true">*</span><span class="sr">(obligatoire)</span></label><input id="c-mail" type="email" autocomplete="email" required aria-describedby="c-mail-e"><p class="hint" id="c-mail-e"></p></div>
-        <div class="fld"><label for="c-tel">Téléphone</label><input id="c-tel" type="tel" autocomplete="tel" placeholder="Facultatif"></div>
+        <div class="fld"><label for="c-mail">E-mail <span aria-hidden="true">*</span><span class="sr">(obligatoire)</span></label><input id="c-mail" type="email" autocomplete="email" required aria-describedby="c-mail-e" value="${esc(A.id&&A.id.email||"")}"><p class="hint" id="c-mail-e"></p></div>
+        <div class="fld"><label for="c-tel">Téléphone</label><input id="c-tel" type="tel" autocomplete="tel" placeholder="Facultatif" value="${esc(A.id&&A.id.tel||"")}"></div>
         <label class="consent recap-opt"><input type="checkbox" id="c-recap" checked> <span>Recevoir aussi mon récap par e-mail</span></label>
         <label class="consent"><input type="checkbox" id="c-ok" required aria-describedby="c-ok-e"> <span>J'accepte qu'AWONE me recontacte au sujet de ce diagnostic. Mes données ne sont utilisées que pour cet échange.</span></label>
         <p class="hint" id="c-ok-e" style="font-size:.85rem"></p>
@@ -3499,12 +3506,43 @@ function observe(AU){
 /* =========================================================================
    ACTION : contact + envoi
    ========================================================================= */
+/* Suivi des prospects (y compris ceux qui ne terminent pas) : une ligne par session, mise à jour à chaque étape */
+/* Questionnaire lisible : [question telle que posée, réponse complète], dans l'ordre du formulaire */
+function qaList(){ const out=[], clean=x=>String(x==null?"":x).replace(/<[^>]+>/g,"").replace(/\s+/g," ").trim(), w=k=>clean(W[k]||"");
+  const id=A.id||{}; out.push(["Prénom",id.prenom||""],["Associés",(id.associes||[]).join(", ")],["Entreprise",id.structure||""],["E-mail",id.email||""],["Téléphone",id.tel||""]);
+  QS.forEach(q=>{ if(q.type==="identity"||q.type==="assets"||q.type==="socials") return; if(q.showIf && !q.showIf(A)) return;
+    const h=clean(q.qh||(typeof q.q==="function"?q.q({}):q.q)), a=A[q.id]; let v="";
+    if(q.type==="text") v=w(q.id);
+    else if(a!=null){
+      if(q.type==="single"){ v=clean(T(q.opts[a].t)); if(q.other && a===q.opts.length-1 && w(q.id)) v="Autre : "+w(q.id); else if(w(q.id)) v+=" · Précision : "+w(q.id); }
+      else if(q.type==="multi"){ v=(a||[]).map(i=>clean(T(q.opts[i].t))).join(" · "); if(w(q.id)) v+=" · Précision : "+w(q.id); }
+      else v=clean(a);
+      if(q.id==="etab" && A.etabN) v+=` (${A.etabN} au total)`;
+      if(q.id==="ca" && A.croissance) v+=` · Croissance visée : +${A.croissance} %`;
+      if(q.url && A.univers && A.univers.url) v+=` · Site : ${A.univers.url}`;
+      if(q.accounts){ const s=Object.entries(A.socials||{}).map(([k,x])=>`${(NETS.find(n=>n.k===k)||{n:k}).n} : ${x}`); v+= s.length?" · Comptes : "+s.join(" · "):(A.noSocials?" · Aucun compte pour l'instant":""); }
+    }
+    out.push([h,v]); });
+  return out; }
+function answersText(){ const ans={}; QS.forEach(q=>{ const a=A[q.id]; if(a==null || (q.showIf && !q.showIf(A))) return;
+    if(q.type==="assets"||q.type==="identity"||q.type==="socials") return;
+    ans[String(q.row||T(q.q)||q.id).replace(/<[^>]+>/g,"")] = q.type==="single"?T(q.opts[a].t) : q.type==="multi"?a.map(i=>T(q.opts[i].t)).join(", ") : a; }); return ans; }
+function track(statut,extra){
+  if(!CONFIG.webhook || !A.sid || !(A.id&&A.id.email)) return;
+  const q=QS[idx]||{}, shown=QS.filter(x=>!x.showIf||x.showIf(A)), pos=Math.max(1,shown.indexOf(q)+1);
+  const body=JSON.stringify({type:"progression", statut, session:A.sid, date:new Date().toISOString(), etape:`${statut==="termine"?shown.length:pos} / ${shown.length}`,
+    derniere_question: statut==="termine" ? "Résultat affiché" : String(q.qh||T(q.q||"")).replace(/<[^>]+>/g,""), identite:{prenom:A.id.prenom, structure:A.id.structure, email:A.id.email, tel:A.id.tel, associes:A.id.associes||[]},
+    questionnaire:qaList(), reponses:answersText(), precisions:W, site_web:(A.univers&&A.univers.url)||"", ...(extra||{})});
+  try{ if(navigator.sendBeacon && navigator.sendBeacon(CONFIG.webhook, new Blob([body],{type:"text/plain;charset=UTF-8"}))) return; }catch(e){}
+  fetch(CONFIG.webhook,{method:"POST",mode:"no-cors",keepalive:true,headers:{"Content-Type":"text/plain;charset=UTF-8"},body}).catch(()=>{});
+}
+addEventListener("pagehide",()=>{ const r=document.getElementById("result"); if(A.sid && !(r&&r.classList.contains("on"))) track("page_quittee"); });
 function payload(E,AU,ES,contact){
   const ans={}; QS.forEach(q=>{ const a=A[q.id]; if(a==null || (q.showIf && !q.showIf(A))) return;
     if(q.type==="assets"||q.type==="identity"||q.type==="socials") return;
     ans[q.id] = q.type==="single"?T(q.opts[a].t) : q.type==="multi"?a.map(i=>T(q.opts[i].t)) : a; });
   const low=A.ca!=null&&QS.find(q=>q.id==="ca").opts[A.ca].low;
-  return {source:"diagnostic-formules-awone", date:new Date().toISOString(), qualification: low?"À QUALIFIER : CA annuel inférieur à 250 000 €":"Dans la cible", contact, identite:A.id||{},
+  return {source:"diagnostic-formules-awone", session:A.sid||"", date:new Date().toISOString(), qualification: low?"À QUALIFIER : CA annuel inférieur à 250 000 €":"Dans la cible", contact, identite:A.id||{}, questionnaire:qaList(),
     recommandation:F[E.rec].name, fiabilite:Math.round(E.conf*100), adequation:Object.fromEntries(E.res.map(r=>[F[r.f].name,Math.round(r.cov*100)])),
     maturite:AU.global, poles:AU.sc, chantiers:AU.prio.map(p=>p.n), estimation_mensuelle_ht:ES.total, options_sur_devis:ES.dv,
     reponses:ans, pourquoi:W, signaux:signals(),
@@ -3601,7 +3639,8 @@ async function submitContact(E,AU,ES){
   const contact={...(window.__choice||{}), nom:$("#c-nom").value.trim(), email:mail.value.trim(), tel:$("#c-tel").value.trim(), preference:$("#c-recap")&&$("#c-recap").checked?"échange + récap par e-mail":"échange"};
   const who=esc(contact.nom.split(" ")[0]||"");
   if(CONFIG.webhook){
-    if($("#c-recap")&&$("#c-recap").checked){ const sb=$("#talk button[type=submit]"); if(sb) sb.setAttribute("aria-busy","true");
+    contact.recap_client=!!($("#c-recap")&&$("#c-recap").checked);
+    { const sb=$("#talk button[type=submit]"); if(sb) sb.setAttribute("aria-busy","true");
       try{ const ch=(window.__choice&&F.findIndex(x=>x.name===window.__choice.formule_choisie)); const r=await buildPdf(E,ch>=0?ch:E.rec); contact.pdf={nom:r.name, data:r.data}; }catch(err){} }
     await sendHook(E,"demande_contact",contact);
     $("#formZone").innerHTML=`<div class="ok-msg" role="status" tabindex="-1" id="okm"><b>Merci${who?" "+who:""} !</b><br>Votre diagnostic nous est bien parvenu. Nous revenons vers vous très vite${/récap/.test(contact.preference)?", et votre récap arrive par e-mail":""}.</div>`;
