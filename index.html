@@ -3802,7 +3802,7 @@ async function buildPdfRaw(E,chosen){
   pages.forEach(p=>{ const c=p.querySelector(".pp-n"); if(c){ n++; c.textContent=`${n} / ${tot}`; } });
   const name=`Recap-AWONE-${((A.id&&A.id.structure)||"diagnostic").replace(/[^\p{L}\p{N}]+/gu,"-").replace(/^-|-$/g,"")}.pdf`;
   const opt={margin:0, filename:name, image:{type:"jpeg",quality:.88}, enableLinks:true,
-    html2canvas:{scale:(innerWidth<760||(navigator.deviceMemory&&navigator.deviceMemory<=4))?1.25:1.6, useCORS:true, ignoreElements:el=>el.parentElement===document.body && (el.tagName==="MAIN"||el.tagName==="HEADER"||el.tagName==="FOOTER"||el.tagName==="SCRIPT"||/^(chap|seoModal|stickyGo|confetti|pbar|live)$/.test(el.id)||(el.classList&&el.classList.contains("bg"))), backgroundColor:"#FFFFFF", logging:false, scrollX:0, scrollY:0, width:W, height:H-3, windowWidth:W},
+    html2canvas:{scale:(innerWidth<760||(navigator.deviceMemory&&navigator.deviceMemory<=4))?1.25:1.6, useCORS:true, ignoreElements:el=>el.parentElement===document.body && (el.tagName==="MAIN"||el.tagName==="HEADER"||el.tagName==="FOOTER"||el.tagName==="SCRIPT"||/^(chap|seoModal|stickyGo|confetti|pbar|live)$/.test(el.id)||(el.classList&&el.classList.contains("bg"))), backgroundColor:"#FFFFFF", logging:false, scrollX:0, scrollY:0, height:H-3},
     jsPDF:{unit:"px", format:[W,H], orientation:"portrait", hotfixes:["px_scaling"], compress:true},
     pagebreak:{mode:[]}};
   try{ let w=html2pdf().set(opt).from(pages[0]).toPdf();
