@@ -1760,7 +1760,7 @@ html.nomo .rv{opacity:1;transform:none}
    ========================================================================= */
 const CONFIG = {
   webhook: "https://script.google.com/macros/s/AKfycbyaQ9J0cZ7qVeBSEEvSyKNHmjGPXBRc-fjj4Ph73YMuYdRE5GBfcs9fgUalHDZmKf5rig/exec",            // URL qui reçoit les réponses en JSON (Make, Zapier, n8n, CRM…). Vide = rien n'est envoyé automatiquement.
-  bookingUrl: "",         // Lien iClosed (prise de rendez-vous). Vide = bouton masqué.
+  bookingUrl: "https://calendly.com/awabrowsbeautyandschool/boost-awone",         // Lien Calendly (prise de rendez-vous). Vide = bouton masqué.
   checkoutEndpoint: "",   // À terme : fonction serveur (Make / Netlify / Vercel) qui reçoit le panier en JSON et renvoie {url} d'une session Stripe Checkout. Vide = liens de paiement ci-dessous.
   // Lien de paiement de démarrage (1 500 €, déduits de la première mensualité) : le même pour Croissance et Croissance 360.
   startFee: "1 500 €",
@@ -3358,7 +3358,7 @@ function buildResult(E){
     </div>
     <div class="action rv" id="talk"><span class="act-ghost" aria-hidden="true">AWONE</span>
       <div><p class="act-k">Dernière étape</p><h2>Échanger avec <em>AWONE</em></h2><p>Une présentation de la formule, une question avant de démarrer, ou un projet sur mesure : laissez vos coordonnées, notre équipe revient vers vous sous 48 h.</p>
-        ${CONFIG.bookingUrl?`<p style="margin-top:1.4rem"><a class="cta dark" href="${CONFIG.bookingUrl}" target="_blank" rel="noopener">Réserver un créneau ${ICON.next}</a></p>`:""}</div>
+        ${CONFIG.bookingUrl?`<p style="margin-top:1.4rem"><a class="cta dark" href="${CONFIG.bookingUrl}" target="_blank" rel="noopener" data-calendly>Réserver un créneau ${ICON.next}</a></p>`:""}</div>
       <div id="formZone"><form id="contactForm" novalidate>
         <div class="fld"><label for="c-nom">Prénom et nom</label><input id="c-nom" autocomplete="name" value="${esc(A.id&&A.id.prenom||"")}"></div>
         <div class="fld"><label for="c-mail">E-mail <span aria-hidden="true">*</span><span class="sr">(obligatoire)</span></label><input id="c-mail" type="email" autocomplete="email" required aria-describedby="c-mail-e" value="${esc(A.id&&A.id.email||"")}"><p class="hint" id="c-mail-e"></p></div>
@@ -3527,6 +3527,18 @@ function qaList(){ const out=[], clean=x=>String(x==null?"":x).replace(/<[^>]+>/
 function answersText(){ const ans={}; QS.forEach(q=>{ const a=A[q.id]; if(a==null || (q.showIf && !q.showIf(A))) return;
     if(q.type==="assets"||q.type==="identity"||q.type==="socials") return;
     ans[String(q.row||T(q.q)||q.id).replace(/<[^>]+>/g,"")] = q.type==="single"?T(q.opts[a].t) : q.type==="multi"?a.map(i=>T(q.opts[i].t)).join(", ") : a; }); return ans; }
+/* Calendly : ouverture en fenêtre intégrée (popup) sans quitter la page ; lien classique en secours */
+let calP=null;
+function loadCalendly(){ if(window.Calendly) return Promise.resolve(); if(calP) return calP;
+  calP=new Promise((ok,ko)=>{ const l=document.createElement("link"); l.rel="stylesheet"; l.href="https://assets.calendly.com/assets/external/widget.css"; document.head.appendChild(l);
+    const sc=document.createElement("script"); sc.src="https://assets.calendly.com/assets/external/widget.js"; sc.async=true; sc.onload=()=>ok(); sc.onerror=()=>{ calP=null; ko(new Error("calendly")); }; document.head.appendChild(sc); });
+  return calP; }
+document.addEventListener("click",async e=>{ const a=e.target.closest("a[data-calendly]"); if(!a||!CONFIG.bookingUrl||e.metaKey||e.ctrlKey||e.shiftKey) return;
+  e.preventDefault();
+  const id=A.id||{}, nom=[id.prenom,($("#c-nom")&&$("#c-nom").value)||""].find(Boolean)||"", mail=(($("#c-mail")&&$("#c-mail").value)||id.email||"").trim();
+  try{ await Promise.race([loadCalendly(), new Promise((_,ko)=>setTimeout(()=>ko(new Error("délai")),6000))]);
+    window.Calendly.initPopupWidget({url:CONFIG.bookingUrl+"?hide_gdpr_banner=1", prefill:{name:nom, email:mail}}); }
+  catch(err){ window.open(CONFIG.bookingUrl,"_blank","noopener"); } });
 function track(statut,extra){
   if(!CONFIG.webhook || !A.sid || !(A.id&&A.id.email)) return;
   const q=QS[idx]||{}, shown=QS.filter(x=>!x.showIf||x.showIf(A)), pos=Math.max(1,shown.indexOf(q)+1);
