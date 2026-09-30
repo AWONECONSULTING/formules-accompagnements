@@ -757,7 +757,8 @@ html.nomo .flow li span,html.nomo .flow li+li::before{animation:none}
   .fn-stats{flex-direction:column;gap:.6rem}.fn-stat{width:100%}
   .fn.has-img::after{opacity:.22;background-position:center;-webkit-mask:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.25) 45%,#000 100%);mask:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.25) 45%,#000 100%)}
   .fn-ctas{display:flex;flex-direction:column;gap:.6rem}.fn-ctas .cta{width:100%}
-  .fn *{overflow-wrap:anywhere}
+  .fn *{overflow-wrap:break-word}
+  .fn-stat{box-shadow:4px 4px 0 #0A0A0A!important}
 }
 
 /* Comparatif mobile : une formule à la fois, choisie avec le sélecteur */
@@ -778,7 +779,7 @@ html.nomo .flow li span,html.nomo .flow li+li::before{animation:none}
   #cmpTable[data-col="2"] :is(tr>:nth-child(2),tr>:nth-child(4)),
   #cmpTable[data-col="3"] :is(tr>:nth-child(2),tr>:nth-child(3)){display:none}
   #cmpTable tr.grp>th{display:block}
-  #cmpTable td,#cmpTable tbody tr:not(.grp) th,#cmpTable tfoot th{display:block;padding:.75rem .85rem!important;font-size:.88rem;line-height:1.4;overflow-wrap:break-word;hyphens:auto}
+  #cmpTable td,#cmpTable tbody tr:not(.grp) th,#cmpTable tfoot th{display:block;padding:.75rem .85rem!important;font-size:.88rem;line-height:1.4;overflow-wrap:break-word;hyphens:manual}
   #cmpTable .cg.open tr:not(.grp) th{padding-left:.85rem!important}
   #cmpTable tfoot tr{grid-template-columns:1fr}#cmpTable tfoot th{display:none}
   #cmpTable tfoot td{padding:.9rem!important}
