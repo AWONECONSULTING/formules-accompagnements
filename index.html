@@ -3801,12 +3801,15 @@ async function buildPdfRaw(E,chosen){
   const tot=pages.filter(p=>!p.classList.contains("cover")).length; let n=0;
   pages.forEach(p=>{ const c=p.querySelector(".pp-n"); if(c){ n++; c.textContent=`${n} / ${tot}`; } });
   const name=`Recap-AWONE-${((A.id&&A.id.structure)||"diagnostic").replace(/[^\p{L}\p{N}]+/gu,"-").replace(/^-|-$/g,"")}.pdf`;
-  const opt={margin:0, filename:name, image:{type:"jpeg",quality:.88}, enableLinks:true,
+  /* Liens cliquables : position de chaque lien mesurée sur sa propre page, puis ajoutés à la bonne page du PDF */
+  const links=pages.map(p=>{ const pr=p.getBoundingClientRect(); return [...p.querySelectorAll("a[href]")].map(a=>{ const r=a.getBoundingClientRect(); return {x:r.left-pr.left, y:r.top-pr.top, w:r.width, h:r.height, url:a.href}; }).filter(l=>l.w>0&&l.h>0&&/^(https?:|mailto:)/.test(l.url)); });
+  const opt={margin:0, filename:name, image:{type:"jpeg",quality:.88}, enableLinks:false,
     html2canvas:{scale:(innerWidth<760||(navigator.deviceMemory&&navigator.deviceMemory<=4))?1.25:1.6, useCORS:true, ignoreElements:el=>el.parentElement===document.body && (el.tagName==="MAIN"||el.tagName==="HEADER"||el.tagName==="FOOTER"||el.tagName==="SCRIPT"||/^(chap|seoModal|stickyGo|confetti|pbar|live)$/.test(el.id)||(el.classList&&el.classList.contains("bg"))), backgroundColor:"#FFFFFF", logging:false, scrollX:0, scrollY:0, height:H-3},
     jsPDF:{unit:"px", format:[W,H], orientation:"portrait", hotfixes:["px_scaling"], compress:true},
     pagebreak:{mode:[]}};
   try{ let w=html2pdf().set(opt).from(pages[0]).toPdf();
     pages.slice(1).forEach(pgEl=>{ w=w.get("pdf").then(pdf=>{ pdf.addPage([W,H],"portrait"); }).from(pgEl).toContainer().toCanvas().toPdf(); });
+    w=w.get("pdf").then(pdf=>{ links.forEach((ls,k)=>{ if(!ls.length||k>=pdf.internal.getNumberOfPages()) return; pdf.setPage(k+1); ls.forEach(l=>pdf.link(l.x,l.y,l.w,l.h,{url:l.url})); }); });
     const data=await w.outputPdf("datauristring"); return {name, data, pages:pages.length}; }
   finally{ stage.remove(); }
 }
