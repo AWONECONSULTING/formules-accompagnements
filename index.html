@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Quelle formule AWONE pour vous ? · Diagnostic gratuit</title>
 <meta name="description" content="Répondez à quelques questions et découvrez la formule d'accompagnement AWONE adaptée à votre structure, avec votre mini-audit personnalisé.">
 <meta name="theme-color" content="#0A0A0A">
@@ -1811,6 +1811,21 @@ html.nomo .rv{opacity:1;transform:none}
   .deck .fcard:hover .fc-back,.herocard .fcard:hover .fc-back,.flip:hover .flip-b{visibility:visible}}
 .ring .fc-front,.ring .fc-back{visibility:visible;transition:none}
 @media (hover:none){.fc-front::before{mix-blend-mode:normal;opacity:.35}}
+/* Accueil, écrans tactiles : cartes posées (sans flottement continu) et retournement plus court = animation fluide sur iPhone */
+@media (hover:none){
+  .deck .fcard{animation:none!important;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+  .deck .fcard:nth-child(1){transform:rotateZ(-5deg)}.deck .fcard:nth-child(2){transform:rotateZ(2deg)}.deck .fcard:nth-child(3){transform:rotateZ(5deg)}
+  .deck .fcard.on{transform:rotateZ(0deg) translateY(-6px) scale(1.04)}
+  .deck .fc-in{transition:transform .6s cubic-bezier(.2,.8,.2,1);will-change:transform}
+  .deck .fc-front,.deck .fc-back{transition:visibility 0s linear .28s}
+}
+/* Menu mobile : bandeau noir plein, jusqu'en haut de l'écran (zone de l'heure / encoche comprise) — plus de contenu visible derrière */
+@media(max-width:900px){
+  .top{background:#0A0A0A!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding-top:calc(10px + env(safe-area-inset-top,0px))!important}
+  .top::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:200px;background:#0A0A0A}
+  html,body{background:#0A0A0A}
+  body{padding-top:env(safe-area-inset-top,0px)} /* le contenu démarre sous l'encoche, comme le menu */
+}
 </style>
 </head>
 <body>
@@ -2270,7 +2285,7 @@ function fcard(i, extraBack, noPrice){
    INTRO
    ========================================================================= */
 $("#deck").innerHTML = [0,1,2].map(i=>fcard(i, `<p class="bk-t">${F[i].name}</p><ul>${F[i].punch.map(k=>`<li>${k}</li>`).join("")}</ul><div class="logo-s">${LOGO}</div>`)).join("");
-$$("#deck .fcard").forEach(c=>{ c.addEventListener("click",()=>c.classList.toggle("on")); tilt(c,10,c); });
+let deckZ=10; $$("#deck .fcard").forEach(c=>{ c.addEventListener("click",()=>{ c.classList.toggle("on"); c.style.zIndex=++deckZ; /* la dernière carte touchée passe devant */ }); tilt(c,10,c); });
 $("#introChips").innerHTML = CH.map(c=>`<li class="chip" style="--c:${c.c}" tabindex="0" aria-label="Étape ${c.n} : ${c.t}">${c.n}<span class="tip" aria-hidden="true">${c.t}</span></li>`).join("");
 $("#prog").innerHTML = CH.map((c,i)=>`<span class="pchip" style="--c:${c.c}" data-i="${i}">${c.n}</span>`).join("");
 $("#startBtn").onclick = ()=>{ A={}; W={}; clearState(); halfShown=false; startQuiz(0); }; magnet($("#startBtn"));
