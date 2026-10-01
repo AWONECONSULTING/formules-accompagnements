@@ -3173,6 +3173,7 @@ function seoFit(){
   const verdict = sc>=6?{k:2,t:"Fortement recommandée",c:"#C1F1AA"} : sc>=3?{k:1,t:"Pertinente pour votre croissance",c:"#FFFF7D"} : {k:0,t:"Pas prioritaire pour l'instant",c:"#FDEAD2"};
   let tier=0; if((A.ca||0)>=1 || dg.includes(1)) tier=1; if(((A.ca||0)>=2 && (n>=3||A.secteur===3||sc>=8)) || n>=5) tier=2;
   if(verdict.k===0) tier=0;
+  if(seoMember()) tier=Math.max(1,tier); /* Croissance 360 / Sur mesure : la Standard est déjà incluse, on conseille au minimum la Performance (Premium si les réponses le justifient) */
   return {sc, verdict, tier, why:why.filter(Boolean).slice(0,3)};
 }
 const SI={card:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',gift:'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v9H5v-9"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/>',spark:'<path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2z"/>',check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>'};
@@ -3192,7 +3193,7 @@ function seoModalHTML(){
       <li style="--k:#FEABFF">${sic("gift")}<span><b>Audit SEO offert</b><small>Dans les trois formules</small></span></li>
       ${mb?`<li class="gold">${sic("spark")}<span><b>Standard offerte</b><small>Avec ${F[SEOF].name}, upgrades au tarif membre</small></span></li>`:`<li style="--k:#FFFF7D">${sic("spark")}<span><b>Sans engagement de démarrage</b><small>Vous choisissez le bon moment</small></span></li>`}
     </ul>
-    <div class="seo-g">${SEO.map((o,i)=>{ const rec=fit.verdict.k>0&&fit.tier===i, on=seoSel()===i; return `<article class="seo-c ${on?"on":""} ${rec?"rec":""}" style="--sc:${o.c}">
+    <div class="seo-g">${SEO.map((o,i)=>{ const rec=(fit.verdict.k>0||mb)&&fit.tier===i, on=seoSel()===i; return `<article class="seo-c ${on?"on":""} ${rec?"rec":""}" style="--sc:${o.c}">
       <div class="sc-top">${rec?`<span class="sc-rec">Conseillée pour vous</span>`:o.badge?`<span class="sc-b">${o.badge}</span>`:`<span class="sc-b sp" aria-hidden="true">·</span>`}</div>
       <h3>${o.n}</h3>
       <p class="sc-p">${seoPriceHTML(i)}</p>
