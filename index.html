@@ -176,6 +176,7 @@ a,button,label,input,.opt{-webkit-tap-highlight-color:transparent}
 .fc-no{width:34px;height:34px;border-radius:10px;background:var(--ft);color:var(--fc);display:grid;place-items:center;font-family:"Clash Display",sans-serif;letter-spacing:0;font-size:.85rem}
 .fc-name{font-family:"Clash Display",sans-serif;font-weight:600;font-size:1.9rem;line-height:1;margin-top:auto;position:relative;z-index:1}
 .fc-tag{font-size:.86rem;margin-top:.5rem;position:relative;z-index:1}
+.fc-tease{font-family:"General Sans",sans-serif!important;font-size:.9rem!important;font-weight:600;opacity:.85}
 .fc-price{margin-top:1rem;padding-top:.9rem;border-top:1.5px solid color-mix(in srgb,currentColor 28%,transparent);font-family:"Clash Display",sans-serif;font-size:1.05rem;position:relative;z-index:1}
 .deck .fcard:nth-child(1){left:2%;top:14%;animation:floaty 7s ease-in-out infinite}
 .deck .fcard:nth-child(2){left:30%;top:4%;z-index:2;animation:floaty 8s ease-in-out -2s infinite}
@@ -2966,9 +2967,9 @@ function vsOrb(port){
     <g class="vo-me"><circle class="vo-pulse" cx="${cx}" cy="${cy}" r="${CR}" fill="none" stroke="#0A0A0A" stroke-width="2"/>
       <circle cx="${cx}" cy="${cy}" r="${CR}" fill="#0A0A0A"/>
       <text x="${cx}" y="${cy-(port?24:40)}" text-anchor="middle" font-size="${port?17:27}" font-weight="800" fill="#FFFF7D" font-family="Clash Display,sans-serif">AWONE</text>
-      <text x="${cx}" y="${cy-(port?9:16)}" text-anchor="middle" font-size="${port?9:12}" font-weight="700" fill="#FFFFFF" letter-spacing=".04em">1 PRIX UNIQUE</text>
-      <text class="vo-price" x="${cx}" y="${cy+(port?15:22)}" text-anchor="middle" font-size="${port?(VXREC===2?15:18):(VXREC===2?25:31)}" font-weight="800" fill="#39FF6A" font-family="Clash Display,sans-serif">${VXREC===2?"Sur devis":eur(F[VXREC].price)}</text>
-      <text x="${cx}" y="${cy+(port?30:46)}" text-anchor="middle" font-size="${port?8.5:12}" font-weight="700" fill="rgba(255,255,255,.8)">${VXREC===2?"à partir de 5 850 € HT":"HT / mois"}</text></g>
+      <text x="${cx}" y="${cy-(port?9:16)}" text-anchor="middle" font-size="${port?9:12}" font-weight="700" fill="#FFFFFF" letter-spacing=".04em">1 SEULE ÉQUIPE</text>
+      <text class="vo-price" x="${cx}" y="${cy+(port?15:22)}" text-anchor="middle" font-size="${port?18:31}" font-weight="800" fill="#39FF6A" font-family="Clash Display,sans-serif">${TEAM.length} pôles</text>
+      <text x="${cx}" y="${cy+(port?30:46)}" text-anchor="middle" font-size="${port?8.5:12}" font-weight="700" fill="rgba(255,255,255,.8)">réunis pour vous</text></g>
   </svg>`;
 }
 /* ---------- Scène animée (ordinateur) : le chaos des prestataires se réorganise autour d'AWONE ---------- */
@@ -3011,9 +3012,9 @@ function vsStage(){
         <text y="18" text-anchor="middle" font-size="12.5" font-weight="700" fill="#E3261B">au milieu</text></g>
       <g class="st-aw"><circle class="vo-pulse" r="96" fill="none" stroke="#0A0A0A" stroke-width="2"/><circle r="96" fill="#0A0A0A"/>
         <text y="-40" text-anchor="middle" font-size="27" font-weight="800" fill="#FFFF7D" font-family="Clash Display,sans-serif">AWONE</text>
-        <text y="-16" text-anchor="middle" font-size="12" font-weight="700" fill="#FFFFFF" letter-spacing=".04em">1 PRIX UNIQUE</text>
-        <text class="vo-price" y="22" text-anchor="middle" font-size="${VXREC===2?25:31}" font-weight="800" fill="#39FF6A" font-family="Clash Display,sans-serif">${VXREC===2?"Sur devis":eur(F[VXREC].price)}</text>
-        <text y="46" text-anchor="middle" font-size="12" font-weight="700" fill="rgba(255,255,255,.8)">${VXREC===2?"à partir de 5 850 € HT":"HT / mois"}</text></g></g>
+        <text y="-16" text-anchor="middle" font-size="12" font-weight="700" fill="#FFFFFF" letter-spacing=".04em">1 SEULE ÉQUIPE</text>
+        <text class="vo-price" y="22" text-anchor="middle" font-size="31" font-weight="800" fill="#39FF6A" font-family="Clash Display,sans-serif">${TEAM.length} pôles</text>
+        <text y="46" text-anchor="middle" font-size="12" font-weight="700" fill="rgba(255,255,255,.8)">réunis pour vous</text></g></g>
   </svg>`;
 }
 function stageInit(){
@@ -3091,7 +3092,7 @@ function funnelHTML(E,f,struct){
     <li class="fn fn3 rv${fnBg(0)}"><span class="fn-n" aria-hidden="true">01</span><div class="fn-b">
       <p class="fn-lab">Ce que ${f.name} change pour ${struct}</p>
       <div class="fn3-g">${pg.length?`<div class="pg-w"><ul class="pg${pg.length>3?" pg-more":""}" id="pgList">${pg.map((x,i)=>`<li class="${i>2?"pg-x":""}" style="--d:${i*.12}s"><span class="pg-a"><span class="sr">Aujourd'hui : </span>${x[0]}</span><span class="pg-ar" aria-hidden="true"></span><span class="pg-b"><span class="sr">Avec AWONE : </span>${x[1]}</span></li>`).join("")}</ul>${pg.length>3?`<button type="button" class="pg-tg" aria-expanded="false" aria-controls="pgList"><span class="pg-o">Voir les ${pg.length-3} autres changements</span><span class="pg-c">Réduire</span></button>`:""}</div>`:""}
-      <div class="fn-team"><p><b>${price?`Pour ${eur(price)} HT par mois`:"Sur devis, à partir de 5 850 € HT par mois"}</b>, ${struct} dispose des compétences d'une équipe marketing complète, sans recruter :</p>
+      <div class="fn-team"><p><b>Avec ${f.name}</b>, ${struct} dispose des compétences d'une équipe marketing complète, sans recruter :</p>
         <ul>${team.map((t,i)=>`<li style="--d:${i*.07}s;--tc:${["#C7B1FF","#FFFF7D","#FEABFF","#FF6F3C","#D8E7FF","#C1F1AA","#FDEAD2"][i%7]}">${t}</li>`).join("")}</ul>
       </div></div>
     </div></li>
@@ -3417,19 +3418,18 @@ function buildResult(E){
       <h1 class="r-name" id="resTitle" tabindex="-1" style="--fcol:${f.c}"><span class="line" style="display:block;overflow:hidden;padding-bottom:.08em"><span style="display:block;animation:rise 1s var(--ease) .15s both"><span class="hl" style="--hc:${f.c};--ht:${f.t}">${f.name}</span></span></span></h1>
       <p class="r-lead up" style="animation-delay:.5s">${f.tag}. ${rec===0?"Elle couvre tous les besoins que vous avez exprimés, sans payer pour ce que vous n'utiliseriez pas.":rec===1?(E.ovs.length?"C'est la formule qui correspond à votre quotidien ; quelques quantités seront ajustées ensemble.":"Elle couvre l'ensemble des besoins que vous avez exprimés."):(E.crit.length?`Votre activité demande un accompagnement dimensionné pour vous : ${E.crit.map(n=>n.q.row.toLowerCase()).join(", ")}.`:"Plusieurs de vos besoins dépassent les quantités de nos formules : on dimensionne l'accompagnement pour vous.")}</p>
       ${E.notes.map(n=>`<p class="r-note up" style="animation-delay:.6s">${n}</p>`).join("")}
-      <div class="r-price up" style="animation-delay:.65s">${F[rec].was?`<s class="was big-was">${F[rec].was}</s>`:""}<span class="big" id="priceNum">${rec===2?"Sur devis":"0 €"}</span><small>${rec===2?"à partir de la formule Croissance 360 (5 850 € HT / mois)":(ES.opt?`HT / mois · avec vos options : ${eur(ES.total)} HT / mois`:"HT / mois")}</small></div>
-      ${rec<2?(()=>{ const pi=priceIncl(rec); return `<div class="pinc up" style="animation-delay:.75s"><p class="pinc-t">Ce prix comprend notamment :</p><ul>${pi.base.map(x=>`<li>${x}</li>`).join("")}${pi.add.map(x=>`<li class="add">${x}</li>`).join("")}</ul></div>`; })():""}
+      ${rec<2?(()=>{ const pi=priceIncl(rec); return `<div class="pinc up" style="animation-delay:.75s"><p class="pinc-t">Votre formule comprend notamment :</p><ul>${pi.base.map(x=>`<li>${x}</li>`).join("")}${pi.add.map(x=>`<li class="add">${x}</li>`).join("")}</ul></div>`; })():""}
       <div class="conf up" style="animation-delay:.8s"><div class="conf-l"><span>Fiabilité du diagnostic</span><b>${confLbl}</b></div><div class="track"><i id="confBar"></i></div></div>
     </div>
     <div class="hero-r">
     <div class="herocard up" style="animation-delay:.3s">
       <div class="fcard" id="heroCard" style="--fc:${f.c};--ft:${f.t};--fa:${f.a}"><div class="fc-in">
-        <div class="fc-face fc-front"><div class="fc-top"><span>Votre formule</span><span class="fc-no">0${rec+1}</span></div><div class="fc-name">${f.name}</div><div class="fc-tag">${f.tag}</div><div class="fc-price">${fPrice(rec)}</div><span class="holo" aria-hidden="true"></span></div>
+        <div class="fc-face fc-front"><div class="fc-top"><span>Votre formule</span><span class="fc-no">0${rec+1}</span></div><div class="fc-name">${f.name}</div><div class="fc-tag">${f.tag}</div><div class="fc-price fc-tease">Votre tarif vous attend en fin de bilan</div><span class="holo" aria-hidden="true"></span></div>
         <div class="fc-face fc-back"><p class="bk-t">Ce que vous obtenez</p><ul>${f.keys.map(k=>`<li>${k}</li>`).join("")}</ul></div>
       </div></div>
       <button type="button" class="flip-hint" id="heroFlip" aria-pressed="false">${ICON.turn}<span>Voir ce que vous obtenez</span></button>
     </div>
-    <div class="up hero-ctas" style="animation-delay:.9s">${rec<2?`<a class="cta gold pay-go" href="${PAY_START}" id="heroGo">Démarrer l'accompagnement ${ICON.next}</a>${FEE_NOTE()}<a class="cta ghost" href="#talk" id="heroTalk">Échanger avec AWONE</a>`:`<a class="cta gold" href="#talk" id="heroTalk">Échanger avec AWONE ${ICON.next}</a>`}</div>
+    <div class="up hero-ctas" style="animation-delay:.9s"><a class="cta gold" href="#s1" id="heroGo" data-scroll>Découvrir mon bilan complet ${ICON.next}</a><a class="cta ghost" href="#talk" id="heroTalk" data-scroll>Échanger avec AWONE</a></div>
     </div>
   </div>
 
@@ -3461,7 +3461,7 @@ function buildResult(E){
     <div class="sec-h rv"><div><p class="n">Votre plan d'attaque</p><h2 id="sP">Vos 3 chantiers <em>prioritaires</em></h2></div><p>Classés selon votre niveau actuel et la priorité que vous nous avez donnée.</p></div>
     <ol class="prio">${AU.prio.map((c,i)=>`<li class="rv" style="--d:${i*.1}s;--sc:${c.c}"><span class="num">${i+1}</span><div><h3>${c.n} · ${c.it.h}</h3><p>${c.it.a}</p></div></li>`).join("")}</ol>
     ${(()=>{ const fit=seoFit(); return `<div class="seo-teaser rv" style="--vc:${fit.verdict.c}"><div class="st-l"><p class="st-k">Option SEO · référencement naturel</p><p class="st-v"><span class="mv-b">${fit.verdict.t}</span></p><p class="st-t">${fit.why[0]||"Le référencement naturel complète votre accompagnement quand Google devient un canal prioritaire."}</p></div><div class="st-r"><p class="st-p" id="seoTeaserP">${seoTeaserTxt()} <span class="st-fg">à réserver maintenant · rappel sous 4 mois pour la mise en place</span></p><button type="button" class="cta gold" data-seo-open id="seoOpenBtn">Voir les formules SEO ${ICON.next}</button><p class="st-cart" id="seoCartState">${seoSel()!=null?`✓ SEO ${SEO[seoSel()].n} ${seoPrice(seoSel()).incl?"inclus dans votre formule":"sélectionné pour votre accompagnement"}`:""}</p></div></div>`; })()}
-    <div class="prio-go rv"><div><p class="pg-k">Prêt à développer votre croissance ?</p><p class="pg-s">${rec<2?`Formule ${f.name} · ${F[rec].was?strikeP(rec):eur(F[rec].price)} HT / mois`:"Formule Sur mesure · sur devis"}</p></div>
+    <div class="prio-go rv"><div><p class="pg-k">Prêt à développer votre croissance ?</p><p class="pg-s">Formule ${f.name} · tout le détail de votre investissement en fin de bilan</p></div>
       ${rec<2?`<div class="pg-cta"><a class="cta gold pay-go" href="${PAY_START}">Démarrer l'accompagnement ${ICON.next}</a>${FEE_NOTE()}</div>`:`<a class="cta gold" href="#talk">Échanger avec AWONE ${ICON.next}</a>`}</div>
   </section>
 
@@ -3543,7 +3543,7 @@ function buildResult(E){
     <div class="cmp-sw rv" role="group" aria-label="Formule affichée dans le comparatif">${F.map((x,i)=>`<button type="button" class="cmp-sb${i===rec?" on":""}" data-col="${i+1}" aria-pressed="${i===rec}" style="--fc:${x.c};--ft:${x.t}">${i===rec?"★ ":""}${x.name}</button>`).join("")}</div>
     <div id="cmpTable" class="tbl-w rv" data-col="${rec+1}" style="margin-top:1.2rem;--fcol:${f.c};--ftc:${f.t}"><table>
       <caption>Ce qui change selon la formule</caption>
-      <thead><tr><th scope="col"><span class="th-lead">Comparez les formules</span><small class="th-hint">Ouvrez chaque pôle pour le détail</small><button type="button" class="cg-all" id="cgAll" aria-pressed="false">Tout déplier</button></th>${F.map((x,i)=>`<th scope="col" class="${i===rec?"rec":""}">${i===rec?`<span class="th-rec">★ Recommandée</span>`:""}<span class="th-n">${x.name}</span><small class="th-p">${fPrice(i)}</small><button type="button" class="pickBtn th-btn" data-f="${i}" style="--fc:${x.c};--ft:${x.t}">${i===2?"Échanger":"Choisir"}</button></th>`).join("")}</tr></thead>
+      <thead><tr><th scope="col"><span class="th-lead">Comparez les formules</span><small class="th-hint">Ouvrez chaque pôle pour le détail</small><button type="button" class="cg-all" id="cgAll" aria-pressed="false">Tout déplier</button></th>${F.map((x,i)=>`<th scope="col" class="${i===rec?"rec":""}">${i===rec?`<span class="th-rec">★ Recommandée</span>`:""}<span class="th-n">${x.name}</span><button type="button" class="pickBtn th-btn" data-f="${i}" style="--fc:${x.c};--ft:${x.t}">${i===2?"Échanger":"Choisir"}</button></th>`).join("")}</tr></thead>
       ${(()=>{ let gi=-1; const GC=["#C7B1FF","#D8E7FF","#C1F1AA","#FF6F3C","#FEABFF","#FFFF7D","#FDEAD2","#C7B1FF"], GI=["target","monitor","search","inbox","chat","camera","trend","users"]; return CMP.map(row=>{ if(row.g){ gi++; const cnt=CMP.slice(CMP.indexOf(row)+1).findIndex(r=>r.g); const n=cnt<0?CMP.length-CMP.indexOf(row)-1:cnt; return `${gi?"</tbody>":""}<tbody class="cg${gi?"":" open"}" id="cg${gi}"><tr class="grp" style="--gc:${GC[gi%GC.length]}"><th colspan="4" scope="colgroup"><button type="button" class="grp-b" aria-expanded="${gi?"false":"true"}" aria-controls="cg${gi}"><span class="grp-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${SIC[GI[gi%GI.length]]}</svg></span><span class="grp-t">${row.g}</span><span class="grp-c" aria-hidden="true"><span class="gc-o">Découvrir</span><span class="gc-c">Replier</span></span><span class="grp-chev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></button></th></tr>`; }
         const nl=row.q?needOf(row.q):null, need=nl!=null&&nl>0;
         const cells=[0,1,2].map(i=>{ const v=cellFmt(row.v[i]||""); const ko=nl!=null&&nl>i;
@@ -3702,7 +3702,7 @@ function buildResult(E){
   vxInit(); fitFlips(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fitFlips); let ffT, ffW=innerWidth; addEventListener("resize",()=>{ if(innerWidth===ffW) return; ffW=innerWidth; clearTimeout(ffT); ffT=setTimeout(fitFlips,120); });
   $$(".flip").forEach(fl=>{ const t=()=>{ const on=!fl.classList.contains("on"); fl.classList.remove("intro"); fl.classList.toggle("on",on); fl.setAttribute("aria-pressed",on); };
     fl.onclick=t; fl.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); t(); } }; });
-  setTimeout(()=>{ $("#confBar").style.width=Math.round(E.conf*100)+"%"; if(rec<2) countUp($("#priceNum"),F[rec].price,1400,v=>eur(Math.round(v/10)*10)); },500);
+  setTimeout(()=>{ $("#confBar").style.width=Math.round(E.conf*100)+"%"; },500);
   observe(AU); hsInit();
 
   $("#restartBtn").onclick=restartAll;
@@ -3711,8 +3711,8 @@ function buildResult(E){
       <div class="sgo-r"><a class="sgo-b sgo-ghost" href="#talk" data-scroll>Échanger</a>${rec<2?`<a class="sgo-b sgo-gold pay-go" href="${PAY_START}">Démarrer</a>`:`<a class="sgo-b sgo-gold" href="#talk" data-scroll>Échanger avec AWONE</a>`}</div></div>`;
     document.body.appendChild(bar);
     const hero=$(".rhero"), go=$("#go"), talk=$("#talk"); const vis=new Set();
-    let lastY=scrollY, hideDown=false;
-    const upd=()=>{ const heroOut=hero&&hero.getBoundingClientRect().bottom<0; const near=vis.size>0;
+    let lastY=scrollY, hideDown=false, seen=false; /* le prix (barre fixe) n'apparaît qu'une fois la section finale atteinte */
+    const upd=()=>{ if(!seen&&go&&$("#result").classList.contains("on")){ const gr=go.getBoundingClientRect(); if(gr.height>0&&gr.top<innerHeight) seen=true; } const heroOut=seen&&hero&&hero.getBoundingClientRect().bottom<0; const near=vis.size>0;
       if(innerWidth<=640){ const dy=scrollY-lastY; if(Math.abs(dy)>6){ hideDown=dy>0; lastY=scrollY; } } else hideDown=false;
       const on=$("#result").classList.contains("on") && heroOut && !near && !hideDown; bar.classList.toggle("on", on); document.body.classList.toggle("sgo-up", on); document.body.classList.toggle("sgo-pad", $("#result").classList.contains("on")); }; /* marge fixe : la hauteur de page ne varie plus pendant le défilement (sinon saut en bas de page sur mobile) */
     const io=new IntersectionObserver(es=>{ es.forEach(e=>{ e.isIntersecting?vis.add(e.target):vis.delete(e.target); }); upd(); },{threshold:0});
