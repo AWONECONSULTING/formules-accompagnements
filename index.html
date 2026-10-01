@@ -1848,6 +1848,39 @@ html.nomo .rv{opacity:1;transform:none}
 .totop:active{transform:scale(.94)}
 body.sgo-up .totop{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 @media(min-width:901px){body.sgo-up .totop{bottom:110px}}
+/* Menu mobile, version UX : panneau opaque, fond assombri, interrupteurs clairs (Activé / Désactivé), pas d'effet de survol « collant » au toucher */
+@media(max-width:900px){
+  .tools{background:#151515!important;border:1px solid rgba(255,255,255,.16)!important;opacity:0}
+  .top.menu-open .tools{opacity:1!important}
+  .top::after{content:"";position:absolute;left:0;right:0;top:100%;height:100vh;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:opacity .25s ease}
+  .top.menu-open::after{opacity:1;pointer-events:auto}
+  .tools .tb{color:#FFFFFF!important;background:rgba(255,255,255,.07)!important;border:1px solid transparent!important;font-weight:600;transition:background .2s ease,transform .15s ease}
+  .tools .tb:hover{border-color:transparent!important}
+  .tools .tb:active{transform:scale(.98);background:rgba(255,255,255,.14)!important}
+  .tools .tb svg{width:18px;height:18px;color:#FFFF7D}
+  .tools .tb[aria-pressed]::after{content:"Désactivé";margin-left:auto;font-size:.72rem;font-weight:700;letter-spacing:.02em;padding:.3rem .65rem;border-radius:100px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.75);white-space:nowrap}
+  .tools .tb[aria-pressed="true"]::after{content:"Activé";background:#FFFF7D;color:#0A0A0A}
+  .tools .tb[aria-pressed="true"]{background:rgba(255,255,255,.07)!important}
+  .tools .tb:focus-visible{outline:2px solid #FFFF7D;outline-offset:2px}
+  .tb-menu:hover{border-color:rgba(255,255,255,.3)}
+  .top.menu-open .tb-menu{background:#FFFFFF;color:#0A0A0A;border-color:#FFFFFF}
+}
+@media(max-width:900px){.tools{z-index:3}.top::after{z-index:1}}
+/* Accueil : bouton « Commencer mon diagnostic » un peu moins gras et plus éloigné des bords */
+@media(max-width:640px){
+  .ir .start-row{padding-inline:14px}
+  .ir .cta{min-width:0;width:min(100%,320px);min-height:56px;font-size:1rem;font-weight:600;letter-spacing:0}
+}
+/* Écrans tactiles : retournement « à plat » (2D) des cartes — fluide sur iPhone et Android, sans 3D ni effet de dos qui transparaît */
+@media (hover:none){
+  .deck .fc-in,.herocard .fc-in,.flip .flip-in{transform:none!important;transform-style:flat!important;-webkit-transform-style:flat!important;transition:none!important;animation:none!important;will-change:auto}
+  .deck .fc-face,.herocard .fc-face,.flip .flip-f{backface-visibility:visible!important;-webkit-backface-visibility:visible!important;visibility:visible!important;will-change:transform}
+  .deck .fc-front,.herocard .fc-front,.flip .flip-a{transform:scaleX(1);transition:transform .2s cubic-bezier(.25,.8,.35,1) .19s!important}
+  .deck .fc-back,.herocard .fc-back,.flip .flip-b{transform:scaleX(0);transition:transform .19s cubic-bezier(.55,0,.75,.2)!important}
+  .deck .fcard.on .fc-front,.herocard .fcard.flipped .fc-front,.flip.on .flip-a{transform:scaleX(0);transition:transform .19s cubic-bezier(.55,0,.75,.2)!important}
+  .deck .fcard.on .fc-back,.herocard .fcard.flipped .fc-back,.flip.on .flip-b{transform:scaleX(1);transition:transform .2s cubic-bezier(.25,.8,.35,1) .19s!important}
+  .deck .fcard,.herocard .fcard,.flip{-webkit-tap-highlight-color:transparent}
+}
 </style>
 </head>
 <body>
@@ -3764,7 +3797,7 @@ document.addEventListener("click",async e=>{ const a=e.target.closest("a[data-ca
   const set=o=>{ top.classList.toggle("menu-open",o); btn.setAttribute("aria-expanded",o); };
   btn.addEventListener("click",e=>{ e.stopPropagation(); set(!top.classList.contains("menu-open")); if(top.classList.contains("menu-open")){ const f=tools.querySelector(".tb:not([hidden])"); if(f) f.focus(); } });
   tools.addEventListener("click",e=>{ const b=e.target.closest(".tb"); if(b && b.id!=="tbRestart" || (b && b.id==="tbRestart" && !b.classList.contains("warn"))) setTimeout(()=>set(false),180); });
-  document.addEventListener("click",e=>{ if(top.classList.contains("menu-open") && !e.target.closest(".top")) set(false); });
+  document.addEventListener("click",e=>{ if(top.classList.contains("menu-open") && (!e.target.closest(".top") || e.target===top)) set(false); }); /* toucher le fond assombri ferme le menu */
   document.addEventListener("keydown",e=>{ if(e.key==="Escape" && top.classList.contains("menu-open")){ set(false); btn.focus(); } });
   addEventListener("scroll",()=>{ if(top.classList.contains("menu-open")) set(false); },{passive:true});
 })();
