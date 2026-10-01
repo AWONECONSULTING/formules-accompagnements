@@ -1914,7 +1914,7 @@ body.sgo-up .totop{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 
 /* Section « Nous avons compris » sur ordinateur : pas de vide en haut ni en bas, les cartes occupent la hauteur de l'écran */
 .hs.pin{margin-top:36px}
-.hs.pin .hs-sticky{padding:84px 0 28px}
+.hs.pin .hs-sticky{min-height:0;padding:0}
 .hs.pin .fn{min-height:min(440px,50vh)}
 .hs.pin+.sec{margin-top:56px}
 
@@ -3780,23 +3780,25 @@ function hsInit(){
   const sec=$("#hs"); if(!sec) return; const view=sec.querySelector(".hs-view"), track=sec.querySelector(".funnel"), sticky=sec.querySelector(".hs-sticky");
   const dots=[...sec.querySelectorAll(".hs-dot")], bar=$("#hsBar"), panels=[...track.querySelectorAll(".fn")];
   const setDot=k=>dots.forEach((d,i)=>d.classList.toggle("on",i===k));
-  let dist=0, zf=1, cur=0;
+  let dist=0, zf=1, cur=0, stTop=0, stH=0;
   const fitH=()=>{ if(!sec.classList.contains("hsm")) return; track.style.height=""; const pv=$("#hsPrev"), nx=$("#hsNext"); if(pv) pv.disabled=cur<=0; if(nx) nx.disabled=cur>=panels.length-1; };
   const go=k=>{ k=Math.max(0,Math.min(panels.length-1,k)); const pnl=panels[k]; track.scrollTo({left:pnl.offsetLeft-(track.clientWidth-pnl.offsetWidth)/2,behavior:motion?"smooth":"auto"}); };
   $("#hsPrev")&&$("#hsPrev").addEventListener("click",()=>go(cur-1)); $("#hsNext")&&$("#hsNext").addEventListener("click",()=>go(cur+1));
-  const layout=()=>{ sec.classList.remove("pin","hsm","hsv"); sec.style.height=""; track.style.transform=""; track.style.zoom="";
+  const layout=()=>{ sec.classList.remove("pin","hsm","hsv"); sec.style.height=""; sticky.style.top=""; track.style.transform=""; track.style.zoom="";
     track.style.height="";
     if(innerWidth<=640){ sec.classList.add("hsv"); return; } /* mobile : cartes empilées, hauteur naturelle */
     const toSwipe=()=>{ sec.classList.remove("pin"); track.style.zoom=""; sec.classList.add("hsm"); fitH(); };
     if(innerWidth<=900 || !motion){ toSwipe(); return; }
     sec.classList.add("pin");
-    track.style.zoom=""; const over=sticky.scrollHeight-innerHeight;
+    track.style.zoom=""; const over=sticky.scrollHeight-(innerHeight-96);
     if(over>0){ const ph=Math.max(...panels.map(x=>x.offsetHeight)), z=(ph-over-4)/ph; if(z<.7){ toSwipe(); return; } track.style.zoom=z; }
     zf=parseFloat(track.style.zoom)||1;
     const vr=view.getBoundingClientRect(), lr=panels[panels.length-1].getBoundingClientRect(); dist=Math.max(0,Math.ceil(lr.right-vr.right))/zf;
-    sec.style.height=(innerHeight+dist*1.1)+"px"; onScroll(); };
-  const onScroll=()=>{ if(!sec.classList.contains("pin")) return; const r=sec.getBoundingClientRect(), span=sec.offsetHeight-innerHeight;
-    const p=Math.min(1,Math.max(0,-r.top/(span||1))); track.style.transform=`translate3d(${-p*dist}px,0,0)`; /* dist est en px locaux (zoom compris) */ bar.style.width=(p*100)+"%";
+    /* bloc épinglé à sa hauteur réelle, centré à l'écran : la section reste collée aux sections voisines */
+    stH=sticky.offsetHeight; stTop=Math.max(76,Math.round((innerHeight-stH)/2)); sticky.style.top=stTop+"px";
+    sec.style.height=(stH+dist*1.1)+"px"; onScroll(); };
+  const onScroll=()=>{ if(!sec.classList.contains("pin")) return; const r=sec.getBoundingClientRect(), span=sec.offsetHeight-stH;
+    const p=Math.min(1,Math.max(0,(stTop-r.top)/(span||1))); track.style.transform=`translate3d(${-p*dist}px,0,0)`; /* dist est en px locaux (zoom compris) */ bar.style.width=(p*100)+"%";
     setDot(Math.min(panels.length-1,Math.round(p*(panels.length-1)))); };
   track.addEventListener("scroll",()=>{ if(!sec.classList.contains("hsm")) return; const w=track.scrollWidth-track.clientWidth, p=w>0?track.scrollLeft/w:0;
     bar.style.width=(p*100)+"%"; const k=Math.round(p*(panels.length-1)); setDot(k); if(k!==cur){ cur=k; fitH(); } },{passive:true});
