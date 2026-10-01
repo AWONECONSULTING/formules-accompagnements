@@ -1794,6 +1794,14 @@ html.nomo .rv{opacity:1;transform:none}
   .r-price .big{color:#0A0A0A}.sec{margin-top:30px;break-inside:avoid-page}
   th,td{border-color:#ddd}
 }
+/* Bulles d'options : fond blanc pur, au repos comme au survol — seul le mouvement signale le survol */
+.opt .in,.net,.cm span,.radios label,.stp-b,.drop-z,.opts.logos .opt:not(.excl) .in{background:#FFFFFF}
+.opts.logos .opt:not(.excl) .in{backdrop-filter:none;-webkit-backdrop-filter:none}
+.opt:hover .in{background:#FFFFFF;box-shadow:none;transform:rotateX(var(--rx)) rotateY(var(--ry)) translateY(-3px)}
+.opts.logos .opt:not(.excl):hover .in{background:#FFFFFF;transform:translateY(-4px)}
+.opts.logos .opt:not(.excl) input:checked~.in{background:#FFFFFF}
+.stp-b:hover,.drop-z:hover,.drop-z.over,.net:hover,.cm span:hover,.radios label:hover{background:#FFFFFF}
+@media (hover:none){.opt:hover .in{transform:rotateX(var(--rx)) rotateY(var(--ry))}}
 </style>
 </head>
 <body>
