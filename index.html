@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quelle formule AWONE pour vous ? · Diagnostic gratuit</title>
 <meta name="description" content="Répondez à quelques questions et découvrez la formule d'accompagnement AWONE adaptée à votre structure, avec votre mini-audit personnalisé.">
 <meta name="theme-color" content="#0A0A0A">
@@ -1821,10 +1821,8 @@ html.nomo .rv{opacity:1;transform:none}
 }
 /* Menu mobile : bandeau noir plein, jusqu'en haut de l'écran (zone de l'heure / encoche comprise) — plus de contenu visible derrière */
 @media(max-width:900px){
-  .top{background:#0A0A0A!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding-top:calc(10px + env(safe-area-inset-top,0px))!important}
-  .top::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:200px;background:#0A0A0A}
+  .top{background:#0A0A0A!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
   html,body{background:#0A0A0A}
-  body{padding-top:env(safe-area-inset-top,0px)} /* le contenu démarre sous l'encoche, comme le menu */
 }
 /* Mobile : boutons Retour / Continuer alignés dans la carte question */
 @media(max-width:640px){
