@@ -1893,6 +1893,12 @@ body.sgo-up .totop{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   .fn4 .fn-ctas .pay-go{grid-column:1;grid-row:1}.fn4 .fn-ctas .ghost{grid-column:2;grid-row:1}
   .fn4 .fn-ctas .fee-note{grid-column:1 / -1;grid-row:2;width:auto;margin:.1rem 0 0}
 }
+/* Prise de rendez-vous intégrée (Google Agenda) */
+.rdv-zone{width:100%;min-width:0}
+.rdv-zone iframe{display:block;width:100%;height:720px;border:0;border-radius:22px;background:#FFFFFF;box-shadow:0 20px 50px -25px rgba(0,0,0,.6)}
+.rdv-note{display:flex;gap:.5rem;align-items:flex-start;margin-top:.8rem;font-size:.9rem;line-height:1.45}
+.rdv-note svg{flex:none;width:18px;height:18px;margin-top:.1em}
+@media(max-width:640px){.rdv-zone iframe{height:760px;border-radius:18px}}
 </style>
 </head>
 <body>
@@ -1984,6 +1990,7 @@ body.sgo-up .totop{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
    ========================================================================= */
 const CONFIG = {
   webhook: "https://script.google.com/macros/s/AKfycbyaQ9J0cZ7qVeBSEEvSyKNHmjGPXBRc-fjj4Ph73YMuYdRE5GBfcs9fgUalHDZmKf5rig/exec",            // URL qui reçoit les réponses en JSON (Make, Zapier, n8n, CRM…). Vide = rien n'est envoyé automatiquement.
+  rdvUrl: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ3y6KxnvQR9DvcK29GG-CCALGmOKgzgL7wBqYNxSVaOXZzNZkN_RzygsPRzCBoDpGQHQDTHWecn?gv=true",            // Page de réservation Google Agenda (lien « intégrer »). Rempli = calendrier intégré à la place du formulaire de contact.
   bookingUrl: "https://calendly.com/awabrowsbeautyandschool/boost-awone",         // Lien Calendly (prise de rendez-vous). Vide = bouton masqué.
   checkoutEndpoint: "",   // À terme : fonction serveur (Make / Netlify / Vercel) qui reçoit le panier en JSON et renvoie {url} d'une session Stripe Checkout. Vide = liens de paiement ci-dessous.
   // Lien de paiement de démarrage (1 500 €, déduits de la première mensualité) : le même pour Croissance et Croissance 360.
@@ -3604,9 +3611,10 @@ function buildResult(E){
       <div class="sum rv" id="sum" aria-live="polite"></div>
     </div>
     <div class="action rv" id="talk"><span class="act-ghost" aria-hidden="true">AWONE</span>
-      <div><p class="act-k">Dernière étape</p><h2>Échanger avec <em>AWONE</em></h2><p>Une présentation de la formule, une question avant de démarrer, ou un projet sur mesure : laissez vos coordonnées, notre équipe revient vers vous sous 48 h.</p>
+      <div><p class="act-k">Dernière étape</p><h2>Échanger avec <em>AWONE</em></h2>${CONFIG.rdvUrl?`<p>Une présentation de la formule, une question avant de démarrer, ou un projet sur mesure : choisissez directement le créneau qui vous convient, vous recevez aussitôt la confirmation par e-mail.</p>`:`<p>Une présentation de la formule, une question avant de démarrer, ou un projet sur mesure : laissez vos coordonnées, notre équipe revient vers vous sous 48 h.</p>`}
 </div>
-      <div id="formZone"><form id="contactForm" novalidate>
+      ${CONFIG.rdvUrl?`<div class="rdv-zone" id="rdvZone"><iframe src="${esc(CONFIG.rdvUrl)}" title="Prendre rendez-vous avec AWONE" loading="lazy"></iframe>${A.id&&A.id.email?`<p class="rdv-note">${I_INFO}<span>Pour retrouver votre diagnostic, réservez avec la même adresse : <b>${esc(A.id.email)}</b></span></p>`:""}</div>`:""}
+      <div id="formZone"${CONFIG.rdvUrl?" hidden":""}><form id="contactForm" novalidate>
         <div class="fld"><label for="c-nom">Prénom et nom</label><input id="c-nom" autocomplete="name" value="${esc(A.id&&A.id.prenom||"")}"></div>
         <div class="fld"><label for="c-mail">E-mail <span aria-hidden="true">*</span><span class="sr">(obligatoire)</span></label><input id="c-mail" type="email" autocomplete="email" required aria-describedby="c-mail-e" value="${esc(A.id&&A.id.email||"")}"><p class="hint" id="c-mail-e"></p></div>
         <div class="fld"><label for="c-tel">Téléphone</label><input id="c-tel" type="tel" autocomplete="tel" placeholder="Facultatif" value="${esc(A.id&&A.id.tel||"")}"></div>
