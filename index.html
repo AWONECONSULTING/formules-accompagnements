@@ -3939,7 +3939,7 @@ function sendHook(E,type,extra){
   const body=JSON.stringify({type, ...payload(E,AU,ES,extra||null)});
   return fetch(CONFIG.webhook,{method:"POST",mode:"no-cors",keepalive:body.length<60000,headers:{"Content-Type":"text/plain;charset=UTF-8"},body}).then(()=>true).catch(()=>false);
 }
-function afterPaint(ms){ return new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(r,ms||0)))); }
+function afterPaint(ms){ return new Promise(r=>{ let done=false; const go=()=>{ if(!done){ done=true; r(); } }; requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(go,ms||0))); setTimeout(go,(ms||0)+400); }); } /* onglet en arrière-plan : rAF suspendu, le minuteur prend le relais */
 async function sendContactBg(E,contact){
   const guard=e=>{ e.preventDefault(); e.returnValue=""; }; addEventListener("beforeunload",guard);
   let ok=false;
