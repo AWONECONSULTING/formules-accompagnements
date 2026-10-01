@@ -1802,6 +1802,15 @@ html.nomo .rv{opacity:1;transform:none}
 .opts.logos .opt:not(.excl) input:checked~.in{background:#FFFFFF}
 .stp-b:hover,.drop-z:hover,.drop-z.over,.net:hover,.cm span:hover,.radios label:hover{background:#FFFFFF}
 @media (hover:none){.opt:hover .in{transform:rotateX(var(--rx)) rotateY(var(--ry))}}
+/* iOS / WebKit : la face cachée d'une carte ne doit jamais transparaître (backface-visibility peu fiable) */
+.fc-front,.flip-f{visibility:visible;transition:visibility 0s linear .3s}
+.fc-back,.flip-b{visibility:hidden;transition:visibility 0s linear .3s}
+.deck .fcard.on .fc-front,.herocard .fcard.flipped .fc-front,.flip.on .flip-f{visibility:hidden}
+.deck .fcard.on .fc-back,.herocard .fcard.flipped .fc-back,.flip.on .flip-b{visibility:visible}
+@media(hover:hover){.deck .fcard:hover .fc-front,.herocard .fcard:hover .fc-front,.flip:hover .flip-f{visibility:hidden}
+  .deck .fcard:hover .fc-back,.herocard .fcard:hover .fc-back,.flip:hover .flip-b{visibility:visible}}
+.ring .fc-front,.ring .fc-back{visibility:visible;transition:none}
+@media (hover:none){.fc-front::before{mix-blend-mode:normal;opacity:.35}}
 </style>
 </head>
 <body>
@@ -3593,8 +3602,8 @@ function buildResult(E){
   const hc=$("#heroCard"); tilt(hc.parentElement,14,hc);
   const hf=$("#heroFlip"); const flipHero=()=>{ const on=!hc.classList.contains("flipped"); hc.classList.toggle("flipped",on); hf.setAttribute("aria-pressed",on); hf.querySelector("span").textContent=on?"Revenir à la carte":"Voir les points clés"; };
   hc.onclick=flipHero; hf.onclick=flipHero;
-  const fitFlips=()=>{ const g=$(".flips"); if(!g) return; g.classList.add("measure"); g.style.setProperty("--fh","12px"); let m=0; g.querySelectorAll(".flip-f").forEach(f=>{ m=Math.max(m,f.scrollHeight); }); g.style.setProperty("--fh",Math.ceil(m+6)+"px"); g.classList.remove("measure"); };
-  vxInit(); fitFlips(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fitFlips); let ffT; addEventListener("resize",()=>{ clearTimeout(ffT); ffT=setTimeout(fitFlips,120); });
+  const fitFlips=()=>{ const g=$(".flips"); if(!g) return; const y0=scrollY; g.classList.add("measure"); g.style.setProperty("--fh","12px"); let m=0; g.querySelectorAll(".flip-f").forEach(f=>{ m=Math.max(m,f.scrollHeight); }); g.style.setProperty("--fh",Math.ceil(m+6)+"px"); g.classList.remove("measure"); if(Math.abs(scrollY-y0)>1) window.scrollTo({top:y0,behavior:"instant"}); };
+  vxInit(); fitFlips(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fitFlips); let ffT, ffW=innerWidth; addEventListener("resize",()=>{ if(innerWidth===ffW) return; ffW=innerWidth; clearTimeout(ffT); ffT=setTimeout(fitFlips,120); });
   $$(".flip").forEach(fl=>{ const t=()=>{ const on=!fl.classList.contains("on"); fl.classList.remove("intro"); fl.classList.toggle("on",on); fl.setAttribute("aria-pressed",on); };
     fl.onclick=t; fl.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); t(); } }; });
   setTimeout(()=>{ $("#confBar").style.width=Math.round(E.conf*100)+"%"; if(rec<2) countUp($("#priceNum"),F[rec].price,1400,v=>eur(Math.round(v/10)*10)); },500);
@@ -3609,7 +3618,7 @@ function buildResult(E){
     let lastY=scrollY, hideDown=false;
     const upd=()=>{ const heroOut=hero&&hero.getBoundingClientRect().bottom<0; const near=vis.size>0;
       if(innerWidth<=640){ const dy=scrollY-lastY; if(Math.abs(dy)>6){ hideDown=dy>0; lastY=scrollY; } } else hideDown=false;
-      const on=$("#result").classList.contains("on") && heroOut && !near && !hideDown; bar.classList.toggle("on", on); document.body.classList.toggle("sgo-pad", on); };
+      const on=$("#result").classList.contains("on") && heroOut && !near && !hideDown; bar.classList.toggle("on", on); document.body.classList.toggle("sgo-pad", $("#result").classList.contains("on")); }; /* marge fixe : la hauteur de page ne varie plus pendant le défilement (sinon saut en bas de page sur mobile) */
     const io=new IntersectionObserver(es=>{ es.forEach(e=>{ e.isIntersecting?vis.add(e.target):vis.delete(e.target); }); upd(); },{threshold:0});
     [go,talk,...document.querySelectorAll("#result .prio-go,#result .faq-go,#result .fn4 .fn-ctas,#result .hero-ctas,#cmpTable,#hs.pin .funnel")].filter(Boolean).forEach(x=>io.observe(x)); addEventListener("scroll",upd,{passive:true}); upd(); })();
   $$("#result .cta").forEach(magnet);
@@ -3661,7 +3670,7 @@ function hsInit(){
     setDot(Math.min(panels.length-1,Math.round(p*(panels.length-1)))); };
   track.addEventListener("scroll",()=>{ if(!sec.classList.contains("hsm")) return; const w=track.scrollWidth-track.clientWidth, p=w>0?track.scrollLeft/w:0;
     bar.style.width=(p*100)+"%"; const k=Math.round(p*(panels.length-1)); setDot(k); if(k!==cur){ cur=k; fitH(); } },{passive:true});
-  addEventListener("scroll",onScroll,{passive:true}); addEventListener("resize",()=>{ clearTimeout(hsInit.t); hsInit.t=setTimeout(layout,150); });
+  addEventListener("scroll",onScroll,{passive:true}); let hsW=innerWidth; addEventListener("resize",()=>{ if(innerWidth===hsW && innerWidth<=900) return; hsW=innerWidth; clearTimeout(hsInit.t); hsInit.t=setTimeout(layout,150); });
   hsInit.layout=layout; layout(); setTimeout(layout,600);
 }
 function observe(AU){
