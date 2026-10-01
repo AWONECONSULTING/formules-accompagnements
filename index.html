@@ -859,7 +859,7 @@ html.nomo .flow li span,html.nomo .flow li+li::before{animation:none}
 .pp-blk{margin-bottom:18px}
 .pdf-page.cover{background:#0A0A0A;color:#FFFFFF;display:flex;flex-direction:column;justify-content:space-between;padding:56px}
 .pdf-page.cover::before{content:"";position:absolute;right:-160px;top:220px;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,#5B3FD1 0,#C7B1FF22 60%,transparent 72%);opacity:.9}
-.pdf-page .pc-top{position:relative;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:rgba(255,255,255,.7)}.pdf-page .pc-logo img{width:150px;height:auto;display:block}
+.pdf-page .pc-top{position:relative;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:rgba(255,255,255,.7)}.pdf-page .pc-logo img{width:155px;height:auto;display:block;margin:-2px 0 0 -2px}
 .pdf-page .pc-mid{position:relative}
 .pdf-page .pc-k{font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#C7B1FF}
 .pdf-page .pc-for{margin-top:18px;font-size:20px;color:rgba(255,255,255,.85)}
@@ -1826,6 +1826,28 @@ html.nomo .rv{opacity:1;transform:none}
   html,body{background:#0A0A0A}
   body{padding-top:env(safe-area-inset-top,0px)} /* le contenu démarre sous l'encoche, comme le menu */
 }
+/* Mobile : boutons Retour / Continuer alignés dans la carte question */
+@media(max-width:640px){
+  .qnav{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.6rem;align-items:stretch}
+  .qnav .back{padding-inline:.9rem}
+  .qnav .next{width:100%;justify-content:center;margin:0!important;padding-inline:1rem;transform:none!important}
+}
+/* Animation « quelle formule » : cartes centrées dans la scène, rien de coupé sur téléphone */
+.ring .fcard{left:0;right:0;top:0;bottom:0;margin:auto}
+@media(max-width:600px){.stage3d{width:200px;height:260px}}
+/* Mini-audit : retournement plus court et léger sur écran tactile */
+@media (hover:none){
+  .flip-in{transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+  .flip-f,.flip-b{transition:visibility 0s linear .28s}
+  .flip-hint{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(10,10,10,.85)}
+}
+/* Retour en haut (page résultat / mini-audit) */
+.totop{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:7990;width:52px;height:52px;border-radius:50%;border:2px solid #FFFF7D;background:#0A0A0A;color:#FFFF7D;display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 30px -8px rgba(0,0,0,.6);opacity:0;transform:translateY(16px) scale(.9);pointer-events:none;transition:opacity .35s ease,transform .45s cubic-bezier(.22,1,.36,1),bottom .35s ease}
+.totop.on{opacity:1;transform:none;pointer-events:auto}
+.totop svg{width:22px;height:22px}
+.totop:active{transform:scale(.94)}
+body.sgo-up .totop{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+@media(min-width:901px){body.sgo-up .totop{bottom:110px}}
 </style>
 </head>
 <body>
@@ -3198,7 +3220,7 @@ async function reveal(){
   show("reveal");
   say("Analyse de vos réponses en cours.");
   $(".stage3d").classList.remove("pop"); const ring=$("#ring"); ring.innerHTML=[0,1,2].map(i=>fcard(i,null,true)).join("");
-  const R= innerWidth<600?180:230;
+  const R= innerWidth<600?125:230;
   $$("#ring .fcard").forEach((c,i)=>c.style.transform=`rotateY(${i*120}deg) translateZ(${R}px)`);
   const steps=[...CH.map(c=>c.t),"Calcul de l'adéquation"];
   $("#rvSteps").innerHTML=steps.map(s=>`<li>${s}</li>`).join("");
@@ -3633,7 +3655,7 @@ function buildResult(E){
     let lastY=scrollY, hideDown=false;
     const upd=()=>{ const heroOut=hero&&hero.getBoundingClientRect().bottom<0; const near=vis.size>0;
       if(innerWidth<=640){ const dy=scrollY-lastY; if(Math.abs(dy)>6){ hideDown=dy>0; lastY=scrollY; } } else hideDown=false;
-      const on=$("#result").classList.contains("on") && heroOut && !near && !hideDown; bar.classList.toggle("on", on); document.body.classList.toggle("sgo-pad", $("#result").classList.contains("on")); }; /* marge fixe : la hauteur de page ne varie plus pendant le défilement (sinon saut en bas de page sur mobile) */
+      const on=$("#result").classList.contains("on") && heroOut && !near && !hideDown; bar.classList.toggle("on", on); document.body.classList.toggle("sgo-up", on); document.body.classList.toggle("sgo-pad", $("#result").classList.contains("on")); }; /* marge fixe : la hauteur de page ne varie plus pendant le défilement (sinon saut en bas de page sur mobile) */
     const io=new IntersectionObserver(es=>{ es.forEach(e=>{ e.isIntersecting?vis.add(e.target):vis.delete(e.target); }); upd(); },{threshold:0});
     [go,talk,...document.querySelectorAll("#result .prio-go,#result .faq-go,#result .fn4 .fn-ctas,#result .hero-ctas,#cmpTable,#hs.pin .funnel")].filter(Boolean).forEach(x=>io.observe(x)); addEventListener("scroll",upd,{passive:true}); upd(); })();
   $$("#result .cta").forEach(magnet);
@@ -3791,7 +3813,7 @@ function pdfBlocks(E,chosen){
   const L=pdfLinks(chosen), date=new Date().toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"});
   const price=i=>i===2?"Sur devis":(F[i].was?`<s class="pw">${F[i].was}</s> <b class="pn">${eur(F[i].price)}</b>`:`<b class="pn">${eur(F[i].price)}</b>`);
   const B=[];
-  B.push({cover:1, h:`<div class="pc-top"><div class="pc-logo"><img alt="AWONE" src="data:image/svg+xml;charset=utf-8,${encodeURIComponent(LOGO.replace(/currentColor/g,"#FFFFFF").replace(/<svg /,'<svg width="500" height="86" '))}"></div><span>${date}</span></div>
+  B.push({cover:1, h:`<div class="pc-top"><div class="pc-logo"><img alt="AWONE" src="data:image/svg+xml;charset=utf-8,${encodeURIComponent(LOGO.replace(/currentColor/g,"#FFFFFF").replace(/viewBox="[^"]*"/,'viewBox="-8 -8 516 102"').replace(/<svg /,'<svg width="516" height="102" '))}"></div><span>${date}</span></div>
     <div class="pc-mid"><p class="pc-k">Votre diagnostic personnalisé</p><p class="pc-for">${who?who+", voici":"Voici"} la formule faite pour</p><p class="pc-brand">${struct}</p>
       <div class="pc-f" style="--fc:${f.c};--ft:${f.t}">${f.name}</div><p class="pc-tag">${f.tag}</p>
       <p class="pc-price">${price(rec)}${rec<2?` <small>HT / mois</small>`:""}</p></div>
@@ -3903,6 +3925,17 @@ async function submitContact(E,AU,ES){
     $("#okm").focus(); confetti();
   }
 }
+
+/* Bouton « retour en haut » : visible sur la page résultat après un écran et demi de défilement */
+(function(){ const bt=document.createElement("button"); bt.type="button"; bt.className="totop"; bt.setAttribute("aria-label","Revenir en haut de la page");
+  bt.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(bt);
+  const upd=()=>{ const r=document.getElementById("result"); bt.classList.toggle("on", !!(r&&r.classList.contains("on")) && scrollY>innerHeight*1.5); };
+  addEventListener("scroll",upd,{passive:true}); setInterval(upd,1000);
+  bt.addEventListener("click",()=>{ const h=document.documentElement, o=h.style.scrollBehavior; h.style.scrollBehavior="auto"; const y0=scrollY, t0=performance.now(), d=Math.min(1100,350+y0/12);
+    if(typeof motion!=="undefined"&&!motion){ scrollTo(0,0); h.style.scrollBehavior=o; return; }
+    (function fr(t){ const p=Math.min(1,(t-t0)/d), e=1-Math.pow(1-p,3); scrollTo(0,Math.round(y0*(1-e))); if(p<1) requestAnimationFrame(fr); else h.style.scrollBehavior=o; })(t0); });
+})();
 </script>
 </body>
 </html>
