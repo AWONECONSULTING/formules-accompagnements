@@ -1900,6 +1900,17 @@ body.sgo-up .totop{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 .rdv-note{display:flex;gap:.5rem;align-items:flex-start;margin-top:.8rem;font-size:.9rem;line-height:1.45}
 .rdv-note svg{flex:none;width:18px;height:18px;margin-top:.1em}
 @media(max-width:640px){.rdv-zone iframe{height:760px;border-radius:18px}}
+
+/* Tunnel : promesse sous le CTA du haut, récapitulatif de valeur avant le prix */
+.hero-n{font-size:.85rem;color:rgba(255,255,255,.72);text-align:center;margin:.1rem 0 0}
+.stack{margin:0 0 1.6rem;padding:clamp(20px,3vw,30px);border-radius:26px;background:#FFFFFF;color:#0A0A0A;border:2px solid #0A0A0A;box-shadow:6px 6px 0 #C1F1AA}
+.stack .stk-k{font-family:"Clash Display",sans-serif;font-weight:600;font-size:clamp(1.1rem,2vw,1.4rem);margin-bottom:.9rem}
+.stack ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:.5rem 1.2rem;padding:0;margin:0}
+.stack li{position:relative;padding-left:1.6rem;font-size:.95rem;line-height:1.35}
+.stack li::before{content:"";position:absolute;left:0;top:.15em;width:1.05em;height:1.05em;border-radius:50%;background:#C1F1AA url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230A0A0A' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/70% no-repeat;border:1.5px solid #0A0A0A}
+.stack .stk-f{margin-top:1.1rem;padding-top:1rem;border-top:1.5px dashed rgba(10,10,10,.25);font-size:1rem}
+.go-seo{margin-top:1.2rem;grid-template-columns:1fr!important}.go-seo .st-r{text-align:left}
+@media(max-width:600px){.stack{padding:18px;border-radius:20px}.stack ul{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -3113,8 +3124,8 @@ function funnelHTML(E,f,struct){
     <li class="fn fn4 rv${fnBg(3)}"><span class="fn-n" aria-hidden="true">04</span><div class="fn-b">
       <p class="fn-lab">Et maintenant</p>
       <h3>C'est pour tout cela que nous recommandons <span class="fn-f" style="--fc:${f.c};--ft:${f.t}">${f.name}</span> à ${struct}.</h3>
-      <p>Un premier échange suffit pour valider ensemble le plan de départ. Rendez-vous avec l'équipe AWONE sous 72 h.</p>
-      <div class="fn-ctas"><a class="cta gold pay-go" href="${PAY_START}">Démarrer l'accompagnement ${ICON.next}</a>${FEE_NOTE()}<a class="cta ghost onlight" href="#talk" data-scroll>Échanger avec AWONE</a></div>
+      <p>Avant de découvrir votre tarif, voyez tout ce que cet accompagnement réunit pour vous.</p>
+      <div class="fn-ctas"><a class="cta gold" href="#val" data-scroll>Voir tout ce que vous obtenez ${ICON.next}</a></div>
     </div></li>
   </ol>`;
 }
@@ -3429,7 +3440,7 @@ function buildResult(E){
       </div></div>
       <button type="button" class="flip-hint" id="heroFlip" aria-pressed="false">${ICON.turn}<span>Voir ce que vous obtenez</span></button>
     </div>
-    <div class="up hero-ctas" style="animation-delay:.9s"><a class="cta gold" href="#s1" id="heroGo" data-scroll>Découvrir mon bilan complet ${ICON.next}</a><a class="cta ghost" href="#talk" id="heroTalk" data-scroll>Échanger avec AWONE</a></div>
+    <div class="up hero-ctas" style="animation-delay:.9s"><a class="cta gold" href="#s1" id="heroGo" data-scroll>Découvrir mon bilan complet ${ICON.next}</a><p class="hero-n">3 minutes de lecture · votre tarif personnalisé vous attend à la fin</p></div>
     </div>
   </div>
 
@@ -3460,9 +3471,8 @@ function buildResult(E){
   <section class="sec band band-prio" aria-labelledby="sP"><span class="band-ghost" aria-hidden="true">PRIORITÉS</span>
     <div class="sec-h rv"><div><p class="n">Votre plan d'attaque</p><h2 id="sP">Vos 3 chantiers <em>prioritaires</em></h2></div><p>Classés selon votre niveau actuel et la priorité que vous nous avez donnée.</p></div>
     <ol class="prio">${AU.prio.map((c,i)=>`<li class="rv" style="--d:${i*.1}s;--sc:${c.c}"><span class="num">${i+1}</span><div><h3>${c.n} · ${c.it.h}</h3><p>${c.it.a}</p></div></li>`).join("")}</ol>
-    ${(()=>{ const fit=seoFit(); return `<div class="seo-teaser rv" style="--vc:${fit.verdict.c}"><div class="st-l"><p class="st-k">Option SEO · référencement naturel</p><p class="st-v"><span class="mv-b">${fit.verdict.t}</span></p><p class="st-t">${fit.why[0]||"Le référencement naturel complète votre accompagnement quand Google devient un canal prioritaire."}</p></div><div class="st-r"><p class="st-p" id="seoTeaserP">${seoTeaserTxt()} <span class="st-fg">à réserver maintenant · rappel sous 4 mois pour la mise en place</span></p><button type="button" class="cta gold" data-seo-open id="seoOpenBtn">Voir les formules SEO ${ICON.next}</button><p class="st-cart" id="seoCartState">${seoSel()!=null?`✓ SEO ${SEO[seoSel()].n} ${seoPrice(seoSel()).incl?"inclus dans votre formule":"sélectionné pour votre accompagnement"}`:""}</p></div></div>`; })()}
-    <div class="prio-go rv"><div><p class="pg-k">Prêt à développer votre croissance ?</p><p class="pg-s">Formule ${f.name} · tout le détail de votre investissement en fin de bilan</p></div>
-      ${rec<2?`<div class="pg-cta"><a class="cta gold pay-go" href="${PAY_START}">Démarrer l'accompagnement ${ICON.next}</a>${FEE_NOTE()}</div>`:`<a class="cta gold" href="#talk">Échanger avec AWONE ${ICON.next}</a>`}</div>
+    <div class="prio-go rv"><div><p class="pg-k">Vos priorités sont posées.</p><p class="pg-s">Voyons maintenant ce que ${f.name} change concrètement pour ${struct}.</p></div>
+      <a class="cta dark" href="#hs" data-scroll>Voir ce qui va changer ${ICON.next}</a></div>
   </section>
 
   <section class="sec hs" id="hs" aria-labelledby="sR"><div class="hs-sticky">
@@ -3473,7 +3483,7 @@ function buildResult(E){
     <div class="hs-swipe"><span aria-hidden="true">Faites glisser →</span><span class="hs-arr"><button type="button" id="hsPrev" aria-label="Bloc précédent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button><button type="button" id="hsNext" aria-label="Bloc suivant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></button></span></div>
   </div></section>
 
-  <section class="sec val" aria-labelledby="sV">
+  <section class="sec val" id="val" aria-labelledby="sV">
     <div class="sec-h rv"><div><p class="n">La valeur de l'accompagnement</p><h2 id="sV">Et si vous deviez constituer <em>cette équipe vous-même ?</em></h2></div>
       <p>Vous n'achetez pas une prestation mensuelle isolée : vous externalisez un véritable pôle marketing.</p></div>
     <div class="vx duo" id="vxDuo">
@@ -3516,9 +3526,10 @@ function buildResult(E){
     <p class="val-hook rv">Une seule équipe. Une seule direction. <span>Un seul objectif : votre croissance.</span></p>
     <p class="val-end rv">Votre mensualité vous donne accès à un <b>pôle marketing externalisé complet</b>.</p>
     <div class="val-diff rv"><ol class="flow">${FLOW.map((f,i)=>`<li style="--i:${i}"><span>${f}</span></li>`).join("")}</ol></div>
+    <p class="bq-wrap"><a class="bridge-q" href="#how" data-scroll><span>Une équipe, oui.</span> <b>Mais comment travaille-t-elle ? ↓</b></a></p>
   </section>
 
-  <section class="sec how" aria-labelledby="sM">
+  <section class="sec how" id="how" aria-labelledby="sM">
     <div class="sec-h rv"><div><p class="n">Comment nous travaillons</p><h2 id="sM">Pas de recette miracle. <em>Une équipe qui exécute avec vous.</em></h2></div>
       <p>Chaque accompagnement suit la même méthode, pensée pour des résultats mesurables et une relation directe.</p></div>
     <ol class="how-s">${METHOD.map((m,i)=>`<li class="rv" style="--d:${i*.08}s;--c:${m[2]}"><span class="hs-n">0${i+1}</span><b>${m[0]}</b><p>${m[1]}</p></li>`).join("")}</ol>
@@ -3526,9 +3537,10 @@ function buildResult(E){
     <div class="proof rv"><div class="pf-l"><p class="pf-k">Ils nous font confiance</p><p class="pf-t">Des entreprises de tous secteurs, accompagnées de l'idée jusqu'aux résultats.</p>
       <ul class="pf-sec">${PROOF.sectors.map(x=>`<li>${x}</li>`).join("")}</ul></div>
 </div>
+    <p class="bq-wrap"><a class="bridge-q" href="#socle" data-scroll><span>La méthode est posée.</span> <b>Voici tout ce qui est inclus ↓</b></a></p>
   </section>
 
-  <section class="sec wow band band-soc" aria-labelledby="s0"><span class="band-ghost" aria-hidden="true">INCLUS</span>
+  <section class="sec wow band band-soc" id="socle" aria-labelledby="s0"><span class="band-ghost" aria-hidden="true">INCLUS</span>
     <div class="sec-h rv"><div><p class="n">Le socle</p><h2 id="s0">Le socle de votre accompagnement, <em>quelle que soit la formule choisie</em></h2></div>
       <p>Tout ceci est inclus dans chacune de nos formules, sans supplément. La création du site, l'audit et le plan d'action sont réalisés au démarrage.</p></div>
     <p class="soc-badge rv" aria-hidden="true"><span class="sb-in"><b>${SOCLE.length}</b><span>prestations incluses</span><em>dans les 3 formules</em></span></p>
@@ -3543,7 +3555,7 @@ function buildResult(E){
     <div class="cmp-sw rv" role="group" aria-label="Formule affichée dans le comparatif">${F.map((x,i)=>`<button type="button" class="cmp-sb${i===rec?" on":""}" data-col="${i+1}" aria-pressed="${i===rec}" style="--fc:${x.c};--ft:${x.t}">${i===rec?"★ ":""}${x.name}</button>`).join("")}</div>
     <div id="cmpTable" class="tbl-w rv" data-col="${rec+1}" style="margin-top:1.2rem;--fcol:${f.c};--ftc:${f.t}"><table>
       <caption>Ce qui change selon la formule</caption>
-      <thead><tr><th scope="col"><span class="th-lead">Comparez les formules</span><small class="th-hint">Ouvrez chaque pôle pour le détail</small><button type="button" class="cg-all" id="cgAll" aria-pressed="false">Tout déplier</button></th>${F.map((x,i)=>`<th scope="col" class="${i===rec?"rec":""}">${i===rec?`<span class="th-rec">★ Recommandée</span>`:""}<span class="th-n">${x.name}</span><button type="button" class="pickBtn th-btn" data-f="${i}" style="--fc:${x.c};--ft:${x.t}">${i===2?"Échanger":"Choisir"}</button></th>`).join("")}</tr></thead>
+      <thead><tr><th scope="col"><span class="th-lead">Comparez les formules</span><small class="th-hint">Ouvrez chaque pôle pour le détail</small><button type="button" class="cg-all" id="cgAll" aria-pressed="false">Tout déplier</button></th>${F.map((x,i)=>`<th scope="col" class="${i===rec?"rec":""}">${i===rec?`<span class="th-rec">★ Recommandée</span>`:""}<span class="th-n">${x.name}</span><button type="button" class="pickBtn th-btn" data-f="${i}" style="--fc:${x.c};--ft:${x.t}">Choisir</button></th>`).join("")}</tr></thead>
       ${(()=>{ let gi=-1; const GC=["#C7B1FF","#D8E7FF","#C1F1AA","#FF6F3C","#FEABFF","#FFFF7D","#FDEAD2","#C7B1FF"], GI=["target","monitor","search","inbox","chat","camera","trend","users"]; return CMP.map(row=>{ if(row.g){ gi++; const cnt=CMP.slice(CMP.indexOf(row)+1).findIndex(r=>r.g); const n=cnt<0?CMP.length-CMP.indexOf(row)-1:cnt; return `${gi?"</tbody>":""}<tbody class="cg${gi?"":" open"}" id="cg${gi}"><tr class="grp" style="--gc:${GC[gi%GC.length]}"><th colspan="4" scope="colgroup"><button type="button" class="grp-b" aria-expanded="${gi?"false":"true"}" aria-controls="cg${gi}"><span class="grp-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${SIC[GI[gi%GI.length]]}</svg></span><span class="grp-t">${row.g}</span><span class="grp-c" aria-hidden="true"><span class="gc-o">Découvrir</span><span class="gc-c">Replier</span></span><span class="grp-chev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></button></th></tr>`; }
         const nl=row.q?needOf(row.q):null, need=nl!=null&&nl>0;
         const cells=[0,1,2].map(i=>{ const v=cellFmt(row.v[i]||""); const ko=nl!=null&&nl>i;
@@ -3551,7 +3563,7 @@ function buildResult(E){
           const nd=row.q?E.needs.find(x=>x.q.id===row.q):null; if(nd&&nd.ov&&i===1) extra+=` <small class="ovm">+ à ajuster sur devis</small>`;
           return `<td class="${i===rec?"rec":""} ${ko?"ko":""}">${v}${extra}${ko?'<span class="sr"> : ne couvre pas votre besoin</span>':""}</td>`; }).join("");
         return `<tr class="${need?"need":""}"><th scope="row">${row.r}${row.n?`<small class="rn">${row.n}</small>`:""}</th>${cells}</tr>`; }).join("")+"</tbody>"; })()}
-      <tfoot><tr><th scope="row">Votre choix</th>${F.map((x,i)=>`<td class="${i===rec?"rec":""}"><button type="button" class="pickBtn" data-f="${i}" style="--fc:${x.c};--ft:${x.t}">${i===rec?"★ ":""}${i===2?"Échanger avec AWONE":"Choisir "+x.name}</button></td>`).join("")}</tr></tfoot></table></div>
+      <tfoot><tr><th scope="row">Votre choix</th>${F.map((x,i)=>`<td class="${i===rec?"rec":""}"><button type="button" class="pickBtn" data-f="${i}" style="--fc:${x.c};--ft:${x.t}">${i===rec?"★ ":""}${"Choisir "+x.name}</button></td>`).join("")}</tr></tfoot></table></div>
     <details class="cmp-nd"><summary><span>Non inclus : sur devis ou à votre charge</span><span class="nt-tg" aria-hidden="true"></span></summary><div class="cmp-note">${CMP_NOTE}</div></details>
   </section>
   <section class="sec" aria-labelledby="s2">
@@ -3581,14 +3593,15 @@ function buildResult(E){
     <div class="sec-h rv"><div><p class="n">Vos questions</p><h2 id="sF">Tout ce qu'il faut savoir <em>avant de démarrer</em></h2></div>
       <p>Les réponses aux questions que nos clients nous posent le plus souvent.</p></div>
     <div class="faq-l">${FAQS(rec).map((q,i)=>`<details class="fq rv"${i?"":" open"}><summary><span>${q[0]}</span><span class="nt-tg" aria-hidden="true"></span></summary><p>${q[1]}</p></details>`).join("")}</div>
-    <div class="faq-go rv"><p><b>Une autre question ?</b> Notre équipe vous répond sous 48 h.</p><a class="cta ghost" href="#talk" data-scroll>Échanger avec AWONE</a></div>
+    <div class="faq-go rv"><p><b>Vous avez tout vu.</b> Il ne reste qu'à découvrir votre tarif.</p><a class="cta gold" href="#go" data-scroll>Découvrir mon tarif ${ICON.next}</a></div>
   </section>
 
 
   </div><div class="marq" aria-hidden="true"><div class="marq-t">${[0,1].map(()=>`<span style="--c:#C7B1FF">Stratégie</span><span style="--c:#FEABFF">Image de marque</span><span style="--c:#FFFF7D">Site internet</span><span style="--c:#FF6F3C">CRM & automatisations</span><span style="--c:#C1F1AA">Réseaux sociaux</span><span style="--c:#D8E7FF">Publicité</span><span style="--c:#FEABFF">Accompagnement commercial</span>`).join("")}</div></div><div class="wrap">
   <section class="sec" aria-labelledby="s5" id="go">
-    <div class="sec-h rv"><div><p class="n">On passe à l'action</p><h2 id="s5">Choisissez votre formule, <em>on s'occupe du reste</em></h2></div>
+    <div class="sec-h rv"><div><p class="n">Votre tarif</p><h2 id="s5">Tout cela, <em>pour un seul prix mensuel</em></h2></div>
       <p class="go-rec"><span class="gr-k">★ Recommandée pour ${esc((A.id&&A.id.structure)||"vous")}</span><span class="gr-f" style="--fc:${f.c};--ft:${f.t}">${f.name}</span><span class="gr-s">Déjà sélectionnée ci-dessous. Vous restez libre de choisir une autre formule.</span></p></div>
+    ${(()=>{ const it=rec<2?(()=>{ const pi=priceIncl(rec); return pi.base.concat(pi.add); })():TEAM.map(t=>t.n); return `<div class="stack rv"><p class="stk-k">Avec ${f.name}, ${esc((A.id&&A.id.structure)||"votre entreprise")} obtient :</p><ul>${it.map(x=>`<li>${x}</li>`).join("")}</ul><p class="stk-f"><b>9 expertises</b> réunies dans <b>une seule équipe</b>, <b>un seul interlocuteur</b>, <b>une seule mensualité</b>.</p></div>`; })()}
     <div class="go">
       <div class="go-l">
       <fieldset class="pick rv"><legend class="sr">Choisissez votre formule</legend>
@@ -3600,6 +3613,7 @@ function buildResult(E){
             <span class="pk-sub" id="pks-${i}">${pkSub(i)}</span>
           </span></label>`; }).join("")}
       </fieldset>
+    ${(()=>{ const fit=seoFit(); return `<div class="seo-teaser go-seo rv" style="--vc:${fit.verdict.c}"><div class="st-l"><p class="st-k">Option SEO · référencement naturel</p><p class="st-v"><span class="mv-b">${fit.verdict.t}</span></p><p class="st-t">${fit.why[0]||"Le référencement naturel complète votre accompagnement quand Google devient un canal prioritaire."}</p></div><div class="st-r"><p class="st-p" id="seoTeaserP">${seoTeaserTxt()} <span class="st-fg">à réserver maintenant · rappel sous 4 mois pour la mise en place</span></p><button type="button" class="cta gold" data-seo-open id="seoOpenBtn">Voir les formules SEO ${ICON.next}</button><p class="st-cart" id="seoCartState">${seoSel()!=null?`✓ SEO ${SEO[seoSel()].n} ${seoPrice(seoSel()).incl?"inclus dans votre formule":"sélectionné pour votre accompagnement"}`:""}</p></div></div>`; })()}
       <div class="steps steps-in rv"><h3>Ce qui se passe ensuite</h3>
       <ol>
         <li><span class="sn">1</span><div><b>Vous validez votre formule</b><span>Paiement de démarrage de ${CONFIG.startFee}, déduits de votre première mensualité.</span></div></li>
@@ -3692,8 +3706,7 @@ function buildResult(E){
   renderSum();
   cartRefresh=()=>{ renderSum(); [0,1,2].forEach(i=>{ const a=$("#pkp-"+i), b=$("#pks-"+i); if(a) a.innerHTML=pkPrice(i); if(b) b.innerHTML=pkSub(i); }); const tp=$("#seoTeaserP"); if(tp){ const fg=tp.querySelector(".st-fg"); tp.innerHTML=seoTeaserTxt()+" "; if(fg) tp.appendChild(fg); } const cs=$("#seoCartState"); if(cs) cs.textContent=seoSel()!=null?`✓ SEO ${SEO[seoSel()].n} ${seoPrice(seoSel()).incl?"inclus dans votre formule":"sélectionné pour votre accompagnement"}`:""; };
   $$(".pickBtn").forEach(b=>b.onclick=()=>{ const i=+b.dataset.f, r=document.querySelector(`input[name="pick"][value="${i}"]`); r.checked=true; r.dispatchEvent(new Event("change"));
-    if(i===2){ const x=document.querySelector('input[name="pref"][value="parler"]'); if(x) x.checked=true; $("#talk").scrollIntoView({behavior:motion?"smooth":"auto",block:"start"}); setTimeout(()=>{ const m=$("#c-mail"); if(m) m.focus({preventScroll:true}); },700); }
-    else $("#go").scrollIntoView({behavior:motion?"smooth":"auto",block:"start"}); });
+    $("#go").scrollIntoView({behavior:motion?"smooth":"auto",block:"start"}); });
   // Animations du résultat
   const hc=$("#heroCard"); tilt(hc.parentElement,14,hc);
   const hf=$("#heroFlip"); const flipHero=()=>{ const on=!hc.classList.contains("flipped"); hc.classList.toggle("flipped",on); hf.setAttribute("aria-pressed",on); hf.querySelector("span").textContent=on?"Revenir à la carte":"Voir les points clés"; };
