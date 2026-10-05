@@ -2370,8 +2370,8 @@ function jourFr(t,an){ const [y,m,d]=ymdParis(t); return `${d===1?"1er":d} ${MOI
 function offreFin(d){ if(!d||!isFinite(d)) return OFFRE_LEGACY_FIN; const [y,m,j]=ymdParis(d); const dim=new Date(Date.UTC(y,m+2,0)).getUTCDate(); return minuitParis(y,m+1,Math.min(j,dim)+1); }
 function offreTxt(){ const o=window.__offre; if(!VIEW||!o||o.expire) return "";
   const dernier=o.fin-12*36e5;
-  return o.legacy?`<b>Avantage tarifaire maintenu jusqu'au ${jourFr(dernier)} inclus</b>, pour un démarrage au ${jourFr(o.fin)} : vous profitez de ce tarif pendant toute la première année de votre accompagnement.`
-    :`<b>Avantage tarifaire maintenu jusqu'au ${jourFr(dernier)} inclus</b> : vous profitez de ce tarif pendant toute la première année de votre accompagnement.`; }
+  return o.legacy?`<b>Avantage tarifaire maintenu jusqu'au ${jourFr(dernier)} inclus</b>, pour un démarrage au ${jourFr(o.fin)} : ce tarif vous est garanti tout au long de votre première année d'accompagnement.`
+    :`<b>Avantage tarifaire maintenu jusqu'au ${jourFr(dernier)} inclus</b> : ce tarif vous est garanti tout au long de votre première année d'accompagnement.`; }
 function offreAppliquer(d){ const fin=offreFin(d); window.__offre={fin,legacy:!(d&&isFinite(d)),expire:Date.now()>=fin};
   if(window.__offre.expire){ F[1].price=7000; F[1].was=null; F[1].priceTxt="7 000 € HT / mois"; } }
 async function recapLink(){ try{
