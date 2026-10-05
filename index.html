@@ -1927,7 +1927,6 @@ body.sgo-up .totop{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 .est-l li.tot span:last-child{color:#1E6B0B;font-weight:700}
 .pk-price{font-size:clamp(1.35rem,2vw,1.7rem)!important}
 .pk-price s.was{font-size:.75em;color:rgba(255,255,255,.75)}
-.y1{display:inline-block;font-size:.62em;font-weight:600;white-space:nowrap;opacity:.85}
 .pk-price b.now{color:#39FF6A;background:#0A0A0A;font-size:1.12em;padding:.06em .5em;border-radius:10px;text-shadow:0 0 12px rgba(57,255,106,.55);border:1.5px solid rgba(57,255,106,.5)}
 .pk-price:not(:has(.pp)){color:#39FF6A;text-shadow:0 0 12px rgba(57,255,106,.4)}
 .pk input:checked+.pk-in .pk-price s.was{color:rgba(10,10,10,.7)}
@@ -2049,7 +2048,7 @@ const F = [
   {name:"Croissance", price:3500, priceTxt:"3 500 € HT / mois", tag:"Nous construisons et pilotons votre marketing", c:"#334FD7", t:"#D8E7FF", a:"#D8E7FF",
    punch:["Un pôle marketing complet, sans recruter","Chaque demande captée dans votre CRM","2 tournages pro par an"],
    keys:["1 établissement (2 sous une même stratégie)","Un point de suivi chaque mois","Jusqu'à 3 pages qui transforment en demandes","2 tournages photo & vidéo par an","Toutes vos demandes réunies dans un CRM","Une réponse sous 48 h ouvrées"]},
-  {name:"Croissance 360", price:5850, priceTxt:"5 850 € HT / mois la première année", tag:"Votre département marketing externalisé", c:"#C1F1AA", t:"#A018AA", a:"#C1F1AA",
+  {name:"Croissance 360", price:5850, priceTxt:"5 850 € HT / mois", tag:"Votre département marketing externalisé", c:"#C1F1AA", t:"#A018AA", a:"#C1F1AA",
    punch:["Relances auto : zéro prospect oublié","Vos résultats chiffrés chaque mois","4 tournages qualité publicitaire"],
    was:"7 000 €", keys:["Jusqu'à 2 établissements (5 sous une même stratégie)","2 canaux publicitaires en simultané","2 points de suivi par mois","Jusqu'à 6 pages de campagne + parcours visiteurs","4 tournages par an, qualité publicitaire","Relances automatiques : plus aucun prospect oublié","Prospects triés et bilan chiffré chaque mois","Formule SEO Standard incluse"]},
   {name:"Sur mesure", price:null, priceTxt:"Sur devis", tag:"Des moyens dédiés à vos projets", c:"#FFFF7D", t:"#5B3FD1", a:"#FFFF7D",
@@ -3226,8 +3225,8 @@ function seoPick(i){ if(seoMember()){ A.seo = i===0 ? null : (A.seo===i ? null :
 function seoPriceTxt(i){ const x=seoPrice(i); return x.incl?"incluse dans votre formule":`${eur(x.v)} HT / mois${x.was?` au tarif membre au lieu de ${eur(x.was)}`:""}`; }
 const SEO_BASE=["Audit SEO complet au démarrage, offert","Plan de production sur 12 mois","Groupe WhatsApp dédié avec votre équipe","Espace de suivi sécurisé","Optimisation technique continue","Fiche Google Business Profile optimisée","Réorganisation de l'arborescence","Suivi permanent des positions"];
 function strikeP(i,val){ const x=F[i]; return `<span class="pp"><s class="was">${x.was}</s> <b class="now">${val||eur(x.price)}</b></span>`; }
-function fPrice(i){ const x=F[i]; return x.was?`${strikeP(i)} HT / mois <span class="y1">la 1re année</span>`:x.priceTxt; }
-function pkPrice(i){ return i===2?"Sur devis":(F[i].was?`${strikeP(i)} HT / mois <span class="y1">la 1re année</span>`:`${eur(F[i].price)} HT / mois`); }
+function fPrice(i){ const x=F[i]; return x.was?`${strikeP(i)} HT / mois`:x.priceTxt; }
+function pkPrice(i){ return i===2?"Sur devis":(F[i].was?`${strikeP(i)} HT / mois`:`${eur(F[i].price)} HT / mois`); }
 function pkSub(i){ const e=estimate(i); return i===2?`à partir de la formule Croissance 360`:(e.opt?`+ ${eur(e.opt)} d'options · total ${eur(e.total)} HT / mois`:"aucune option ajoutée"); }
 function seoFit(){
   let sc=0; const why=[]; const add=(n,t)=>{ sc+=n; if(t) why.push(t); };
@@ -3689,11 +3688,11 @@ function buildResult(E){
     const miss = chosen<rec ? E.needs.filter(n=>n.l>chosen&&n.q.vals).sort((a,b)=>b.w-a.w).slice(0,4) : [];
     const pay = CONFIG.paymentLinks[chosen];
     $("#sum").innerHTML=`<p class="sum-k">Votre choix</p><h3 style="--fc:${x.c};--ft:${x.t}"><span>${x.name}</span></h3>
-      <div class="sum-big">${chosen===2?`<span class="sb-n">Sur devis</span><small>à partir de la formule Croissance 360</small>`:`<span class="sb-row">${x.was?`<s class="was sb-was">${x.was}</s>`:""}<span class="sb-n">${eur(x.price)}</span></span><small>HT / mois${x.was?" <b>la première année</b>":""}${e.opt?` · avec vos options : <b>${eur(e.total)} HT / mois</b>`:""}</small>`}</div>
+      <div class="sum-big">${chosen===2?`<span class="sb-n">Sur devis</span><small>à partir de la formule Croissance 360</small>`:`<span class="sb-row">${x.was?`<s class="was sb-was">${x.was}</s>`:""}<span class="sb-n">${eur(x.price)}</span></span><small>HT / mois${e.opt?` · avec vos options : <b>${eur(e.total)} HT / mois</b>`:""}</small>`}</div>
       <ul class="est-l">${e.lines.map(l=>`<li><span>${l[0]}</span><span>${l[1]}</span></li>`).join("")}
         ${e.dv.map(d=>`<li class="dv"><span>${d}</span><span>Sur devis</span></li>`).join("")}
-        ${x.was&&x.price?(()=>{ const sv=parseInt(String(x.was).replace(/\D/g,""),10)-x.price; return sv>0?`<li class="save"><span>${eur(sv*12)} économisés la première année</span><span class="sv-m">−${eur(sv)} / mois</span></li>`:""; })():""}
-        <li class="tot"><span>Total mensuel${x.was?" (1re année)":""}</span><span>${e.total!=null?eur(e.total)+" HT":"Sur devis"}</span></li>
+        ${x.was&&x.price?(()=>{ const sv=parseInt(String(x.was).replace(/\D/g,""),10)-x.price; return sv>0?`<li class="save"><span>${eur(sv*12)} économisés par an</span><span class="sv-m">−${eur(sv)} / mois</span></li>`:""; })():""}
+        <li class="tot"><span>Total mensuel</span><span>${e.total!=null?eur(e.total)+" HT":"Sur devis"}</span></li>
 </ul>
       ${seoSel()!=null?`<div class="seo-cart"><p><b>SEO ${SEO[seoSel()].n} ${seoPrice(seoSel()).incl?"inclus dans votre formule":"sélectionné"}</b> (${seoPriceTxt(seoSel())}, audit offert) · rien à payer aujourd'hui. Vous et l'équipe AWONE recevrez un rappel sous 4 mois pour sa mise en place.</p><div><button type="button" class="lnk" data-seo-open>Modifier</button></div></div>`
         :`<button type="button" class="seo-add" data-seo-open><span>+</span> Réserver votre option SEO <small>${seoFit().verdict.t}</small></button>`}
@@ -3762,7 +3761,7 @@ function buildResult(E){
 
   $("#restartBtn").onclick=restartAll;
   (()=>{ const old=$("#stickyGo"); if(old) old.remove(); const bar=document.createElement("div"); bar.id="stickyGo"; bar.className="sgo"; bar.setAttribute("role","region"); bar.setAttribute("aria-label","Votre formule recommandée");
-    bar.innerHTML=`<div class="sgo-in"><div class="sgo-l"><span class="sgo-f" style="--fc:${f.c};--ft:${f.t}">${f.name}</span><span class="sgo-p">${rec===2?"Sur devis":(F[rec].was?`<s class="was">${F[rec].was}</s> `:"")+`<b>${eur(F[rec].price||0)}</b> HT / mois`+(F[rec].was?" · 1re année":"")}</span>${rec<2?`<span class="sgo-fee">${I_INFO}Démarrage ${CONFIG.startFee} HT, déduits du 1er mois</span>`:""}</div>
+    bar.innerHTML=`<div class="sgo-in"><div class="sgo-l"><span class="sgo-f" style="--fc:${f.c};--ft:${f.t}">${f.name}</span><span class="sgo-p">${rec===2?"Sur devis":(F[rec].was?`<s class="was">${F[rec].was}</s> `:"")+`<b>${eur(F[rec].price||0)}</b> HT / mois`}</span>${rec<2?`<span class="sgo-fee">${I_INFO}Démarrage ${CONFIG.startFee} HT, déduits du 1er mois</span>`:""}</div>
       <div class="sgo-r"><a class="sgo-b sgo-ghost" href="#talk" data-scroll>Échanger</a>${rec<2?`<a class="sgo-b sgo-gold pay-go" href="${PAY_START}">Démarrer</a>`:`<a class="sgo-b sgo-gold" href="#talk" data-scroll>Échanger avec AWONE</a>`}</div></div>`;
     document.body.appendChild(bar);
     const hero=$(".rhero"), go=$("#go"), talk=$("#talk"); const vis=new Set();
@@ -3932,7 +3931,7 @@ function pdfBlocks(E,chosen){
   B.push({cover:1, h:`<div class="pc-top"><div class="pc-logo"><img alt="AWONE" width="160" height="32" src="${LOGO_PNG}"></div><span>${date}</span></div>
     <div class="pc-mid"><p class="pc-k">Votre diagnostic personnalisé</p><p class="pc-for">${who?who+", voici":"Voici"} la formule faite pour</p><p class="pc-brand">${struct}</p>
       <div class="pc-f" style="--fc:${f.c};--ft:${f.t}">${f.name}</div><p class="pc-tag">${f.tag}</p>
-      <p class="pc-price">${price(rec)}${rec<2?` <small>HT / mois${F[rec].was?", la première année":""}</small>`:""}</p></div>
+      <p class="pc-price">${price(rec)}${rec<2?` <small>HT / mois</small>`:""}</p></div>
     <div class="pc-bot"><p>Ce document reprend votre recommandation, votre mini-audit et le détail de votre choix.</p><p class="pc-links"><a href="${L.start}">${rec<2?"Démarrer l'accompagnement":"Échanger avec AWONE"} →</a></p>${rec<2?`<p class="pfee">ⓘ <b>Pour démarrer : ${CONFIG.startFee} HT</b>, déduits de votre première mensualité.</p>`:""}</div>`});
   if(pg.length) B.push({h:`<div class="pb pb-lav"><p class="pk">01 · Ce que ${f.name} change pour ${struct}</p><ul class="pgl">${pg.map(p=>`<li><span class="pa">${p[0]}</span><span class="par">→</span><span class="pbb">${p[1]}</span></li>`).join("")}</ul></div>`});
   B.push({h:`<div class="pb pb-sky"><p class="pk">02 · Où en est ${struct}</p><ul class="pul">${rl.map(r=>`<li>${r}</li>`).join("")}</ul></div>`});
@@ -3941,8 +3940,8 @@ function pdfBlocks(E,chosen){
   B.push({h:`<div class="pb pb-ora"><p class="pk">04 · Vos 3 chantiers prioritaires</p><ol class="ppr">${AU.prio.map((c,i)=>`<li><span class="ppn">${i+1}</span><div><b>${c.n} · ${c.it.h}</b><p>${c.it.a}</p></div></li>`).join("")}</ol></div>`});
   B.push({h:`<div class="pb pb-white"><p class="pk">05 · Votre choix</p><p class="pch" style="--fc:${x.c};--ft:${x.t}">${x.name}</p>
     <table class="pct">${e.lines.map(l=>`<tr><td>${l[0]}</td><td>${l[1]}</td></tr>`).join("")}
-    ${x.was&&x.price?(()=>{ const sv=parseInt(String(x.was).replace(/\D/g,""),10)-x.price; return sv>0?`<tr class="psv"><td>${eur(sv*12)} économisés la première année</td><td>−${eur(sv)} / mois</td></tr>`:""; })():""}
-    <tr class="ptot"><td>Total mensuel${x.was?" (1re année)":""}</td><td>${e.total!=null?eur(e.total)+" HT":"Sur devis"}</td></tr></table>
+    ${x.was&&x.price?(()=>{ const sv=parseInt(String(x.was).replace(/\D/g,""),10)-x.price; return sv>0?`<tr class="psv"><td>${eur(sv*12)} économisés par an</td><td>−${eur(sv)} / mois</td></tr>`:""; })():""}
+    <tr class="ptot"><td>Total mensuel</td><td>${e.total!=null?eur(e.total)+" HT":"Sur devis"}</td></tr></table>
     ${seoSel()!=null?`<p class="pseo"><b>SEO ${SEO[seoSel()].n}</b> : ${seoPriceTxt(seoSel())}, audit offert. Rien à payer aujourd'hui, rappel sous 4 mois pour sa mise en place.</p>`:""}
     <p class="pnote">Budget publicitaire minimum conseillé : 1 000 € / mois par plateforme (Meta ou Google), versé directement à la plateforme. Abonnements aux outils et nom de domaine à votre charge.</p></div>`});
   if(pi) B.push({h:`<div class="pb"><p class="pk">06 · Ce que comprend ${x.name} chaque mois</p><ul class="pin">${pi.base.map(b=>`<li>${b}</li>`).join("")}${pi.add.map(b=>`<li class="add">${b}</li>`).join("")}</ul></div>`});
