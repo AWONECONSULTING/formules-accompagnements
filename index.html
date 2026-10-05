@@ -2369,9 +2369,9 @@ function clearState(){ try{ localStorage.removeItem(SAVE); }catch(e){} }
 function loadState(){ try{ const d=JSON.parse(localStorage.getItem(SAVE)||"null"); if(d&&d.A&&Number.isInteger(d.idx)&&d.idx>=0&&d.idx<QS.length&&(d.idx>0||d.done||Object.keys(d.A).length)&&Date.now()-d.t<30*864e5) return d; }catch(e){} return null; }
 /* ---------- Réglages d'accessibilité ---------- */
 function setMotion(v){ motion=v; if(hsInit.layout) setTimeout(hsInit.layout,50); root.classList.toggle("nomo",!v); $("#tbMotion").setAttribute("aria-pressed",v);
-  $("#tbMotion .lbl").textContent = v ? "Animations" : "Animations coupées"; try{localStorage.setItem("aw-motion",v?"on":"off")}catch(e){} }
+  $("#tbMotion .lbl").textContent = v ? "Animations" : "Animations coupées"; if(!VIEW) try{localStorage.setItem("aw-motion",v?"on":"off")}catch(e){} }
 function setBig(v){ root.classList.toggle("big",v); $("#tbText").setAttribute("aria-pressed",v); try{localStorage.setItem("aw-big",v?"1":"0")}catch(e){} }
-try{ if(localStorage.getItem("aw-motion")==="off") setMotion(false); if(localStorage.getItem("aw-big")==="1") setBig(true);}catch(e){}
+try{ /* récap en ligne : animations toujours actives à l'ouverture (on peut les couper, sans que ce soit mémorisé) */ if(!VIEW&&localStorage.getItem("aw-motion")==="off") setMotion(false); if(localStorage.getItem("aw-big")==="1") setBig(true);}catch(e){}
 $("#tbMotion").onclick = ()=> setMotion(!motion);
 $("#tbText").onclick = ()=> setBig(!root.classList.contains("big"));
 
