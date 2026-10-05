@@ -1931,6 +1931,9 @@ body.sgo-up .totop{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 .pk-price:not(:has(.pp)){color:#39FF6A;text-shadow:0 0 12px rgba(57,255,106,.4)}
 .pk input:checked+.pk-in .pk-price s.was{color:rgba(10,10,10,.7)}
 @media(max-width:600px){.sum-big{padding:1rem 1.1rem}.sum-big .sb-n{font-size:2.6rem}}
+
+/* Récap en ligne (consultation) : seul le téléchargement du PDF reste proposé */
+html.view .rm-form>label,html.view .rm-row{display:none}html.view #rmDl{display:none}
 </style>
 </head>
 <body>
@@ -2347,7 +2350,21 @@ function qPos(){ const vis=QS.filter(q=>!q.showIf||q.showIf(A)); return [Math.ma
 function remainTxt(){ const left=QS.length-idx; if(left<=5) return `plus que ${left} question${left>1?"s":""}`;
   const sec=left*9; return sec<60?"moins d'1 min restante":`environ ${Math.ceil(sec/60)} min restantes`; }
 const SAVE="aw-diag-v2"; try{localStorage.removeItem("aw-diag-v1")}catch(e){}
-function saveState(){ try{ const a2=JSON.parse(JSON.stringify(A)); if(a2.univers&&a2.univers.logo&&a2.univers.logo.size>1.5e6) delete a2.univers.logo; localStorage.setItem(SAVE,JSON.stringify({A:a2,W,idx,done:!!(arguments[0]&&arguments[0].done),t:Date.now()})); }catch(e){} }
+/* ---------- Récap en ligne : le lien contient les réponses (sans e-mail ni téléphone) et rouvre le résultat ---------- */
+const RECAP_BASE="https://awoneconsulting.github.io/formules-accompagnements/";
+const VIEW=/^#r=[jz]\.[A-Za-z0-9_-]+/.test(location.hash); /* consultation d'un récap : aucun suivi, aucun envoi, rien n'est enregistré */
+const b64u={ enc:u8=>{ let s=""; for(let i=0;i<u8.length;i+=0x8000) s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000)); return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); },
+  dec:t=>{ const s=atob(t.replace(/-/g,"+").replace(/_/g,"/")+"===".slice((t.length+3)%4)); const u=new Uint8Array(s.length); for(let i=0;i<s.length;i++) u[i]=s.charCodeAt(i); return u; } };
+async function pipeBytes(u8,stream){ return new Uint8Array(await new Response(new Blob([u8]).stream().pipeThrough(stream)).arrayBuffer()); }
+async function recapLink(){ try{
+  const a=JSON.parse(JSON.stringify(A)); delete a.sid; if(a.id){ delete a.id.email; delete a.id.tel; } if(a.univers) delete a.univers.logo;
+  const raw=new TextEncoder().encode(JSON.stringify({v:1,A:a,W}));
+  if(window.CompressionStream){ try{ return RECAP_BASE+"#r=z."+b64u.enc(await pipeBytes(raw,new CompressionStream("deflate-raw"))); }catch(e){} }
+  return RECAP_BASE+"#r=j."+b64u.enc(raw); }catch(e){ return ""; } }
+async function recapRead(){ const m=location.hash.match(/^#r=([jz])\.([A-Za-z0-9_-]+)/); if(!m) return null;
+  let u=b64u.dec(m[2]); if(m[1]==="z") u=await pipeBytes(u,new DecompressionStream("deflate-raw"));
+  const d=JSON.parse(new TextDecoder().decode(u)); return d&&d.A&&typeof d.A==="object"?d:null; }
+function saveState(){ if(VIEW) return; try{ const a2=JSON.parse(JSON.stringify(A)); if(a2.univers&&a2.univers.logo&&a2.univers.logo.size>1.5e6) delete a2.univers.logo; localStorage.setItem(SAVE,JSON.stringify({A:a2,W,idx,done:!!(arguments[0]&&arguments[0].done),t:Date.now()})); }catch(e){} }
 function clearState(){ try{ localStorage.removeItem(SAVE); }catch(e){} }
 function loadState(){ try{ const d=JSON.parse(localStorage.getItem(SAVE)||"null"); if(d&&d.A&&Number.isInteger(d.idx)&&d.idx>=0&&d.idx<QS.length&&(d.idx>0||d.done||Object.keys(d.A).length)&&Date.now()-d.t<30*864e5) return d; }catch(e){} return null; }
 /* ---------- Réglages d'accessibilité ---------- */
@@ -2412,7 +2429,7 @@ $("#startBtn").onclick = ()=>{ A={}; W={}; clearState(); halfShown=false; startQ
   magnet(rb); })();
 
 function show(id){ $$(".screen").forEach(s=>s.classList.toggle("on",s.id===id)); scrollTo({top:0,behavior:"instant"}); const r=$("#tbRestart"); if(r){ r.hidden=(id==="intro"||id==="reveal"); resetRestart(); } }
-function restartAll(){ const sg=document.getElementById("stickyGo"); if(sg) sg.remove(); A={}; W={}; idx=0; halfShown=false; clearTimeout(autoT); clearState(); if("speechSynthesis" in window) speechSynthesis.cancel(); $("#qcard").innerHTML=""; show("intro"); $("#prog").classList.remove("on"); $("#pbar").style.setProperty("--p",0); say("Le diagnostic a été remis à zéro."); }
+function restartAll(){ if(VIEW){ location.replace(RECAP_BASE); return; } const sg=document.getElementById("stickyGo"); if(sg) sg.remove(); A={}; W={}; idx=0; halfShown=false; clearTimeout(autoT); clearState(); if("speechSynthesis" in window) speechSynthesis.cancel(); $("#qcard").innerHTML=""; show("intro"); $("#prog").classList.remove("on"); $("#pbar").style.setProperty("--p",0); say("Le diagnostic a été remis à zéro."); }
 let rsT=null;
 function resetRestart(){ const r=$("#tbRestart"); if(!r) return; clearTimeout(rsT); r.classList.remove("warn"); r.querySelector(".lbl").textContent="Recommencer"; r.setAttribute("aria-label","Recommencer le diagnostic"); }
 $("#tbRestart").onclick=()=>{ const r=$("#tbRestart");
@@ -3305,7 +3322,8 @@ function estimate(rec, withSeo=true){
 async function reveal(){
   $("#pbar").style.setProperty("--p",1); $$(".pchip").forEach(c=>{c.classList.add("done");c.classList.remove("cur")});
   const E=engine();
-  track("termine",{recommandation:F[E.rec].name});
+  window.__recapUrl=await recapLink();
+  track("termine",{recommandation:F[E.rec].name, recap_url:window.__recapUrl});
   show("reveal");
   say("Analyse de vos réponses en cours.");
   $(".stage3d").classList.remove("pop"); const ring=$("#ring"); ring.innerHTML=[0,1,2].map(i=>fcard(i,null,true)).join("");
@@ -3728,6 +3746,8 @@ function buildResult(E){
   cartRefresh=()=>{ renderSum(); [0,1,2].forEach(i=>{ const a=$("#pkp-"+i), b=$("#pks-"+i); if(a) a.innerHTML=pkPrice(i); if(b) b.innerHTML=pkSub(i); }); const tp=$("#seoTeaserP"); if(tp){ const fg=tp.querySelector(".st-fg"); tp.innerHTML=seoTeaserTxt()+" "; if(fg) tp.appendChild(fg); } const cs=$("#seoCartState"); if(cs) cs.textContent=seoSel()!=null?`✓ SEO ${SEO[seoSel()].n} ${seoPrice(seoSel()).incl?"inclus dans votre formule":"sélectionné pour votre accompagnement"}`:""; };
   $$(".pickBtn").forEach(b=>b.onclick=()=>{ const i=+b.dataset.f, r=document.querySelector(`input[name="pick"][value="${i}"]`); r.checked=true; r.dispatchEvent(new Event("change"));
     $("#go").scrollIntoView({behavior:motion?"smooth":"auto",block:"start"}); });
+  if(VIEW){ const rb=$("#rmBtn"), rf=$("#rmForm"); if(rb&&rf){ rb.lastChild.textContent="Télécharger le récap en PDF"; rb.onclick=()=>{ rf.hidden=false; const d=$("#rmDl"); if(d) d.click(); }; } }
+  else if(!window.__recapUrl) recapLink().then(u=>{ window.__recapUrl=u; });
   // Animations du résultat
   const hc=$("#heroCard"); tilt(hc.parentElement,14,hc);
   const hf=$("#heroFlip"); const flipHero=()=>{ const on=!hc.classList.contains("flipped"); hc.classList.toggle("flipped",on); hf.setAttribute("aria-pressed",on); hf.querySelector("span").textContent=on?"Revenir à la carte":"Voir les points clés"; };
@@ -3864,7 +3884,7 @@ document.addEventListener("click",async e=>{ const a=e.target.closest("a[data-ca
   addEventListener("scroll",()=>{ if(top.classList.contains("menu-open")) set(false); },{passive:true});
 })();
 function track(statut,extra){
-  if(!CONFIG.webhook || !A.sid || !(A.id&&A.id.email)) return;
+  if(VIEW || !CONFIG.webhook || !A.sid || !(A.id&&A.id.email)) return;
   const q=QS[idx]||{}, shown=QS.filter(x=>!x.showIf||x.showIf(A)), pos=Math.max(1,shown.indexOf(q)+1);
   const body=JSON.stringify({type:"progression", statut, session:A.sid, date:new Date().toISOString(), etape:`${statut==="termine"?shown.length:pos} / ${shown.length}`,
     derniere_question: statut==="termine" ? "Résultat affiché" : String(q.qh||T(q.q||"")).replace(/<[^>]+>/g,""), identite:{prenom:A.id.prenom, structure:A.id.structure, email:A.id.email, tel:A.id.tel, associes:A.id.associes||[]},
@@ -3881,7 +3901,7 @@ function payload(E,AU,ES,contact){
   return {source:"diagnostic-formules-awone", session:A.sid||"", date:new Date().toISOString(), qualification: low?"À QUALIFIER : CA annuel inférieur à 250 000 €":"Dans la cible", contact, identite:A.id||{}, questionnaire:qaList(),
     recommandation:F[E.rec].name, fiabilite:Math.round(E.conf*100), adequation:Object.fromEntries(E.res.map(r=>[F[r.f].name,Math.round(r.cov*100)])),
     maturite:AU.global, poles:AU.sc, chantiers:AU.prio.map(p=>p.n), estimation_mensuelle_ht:ES.total, options_sur_devis:ES.dv,
-    reponses:ans, pourquoi:W, signaux:signals(),
+    reponses:ans, pourquoi:W, signaux:signals(), recap_url:window.__recapUrl||"",
     site_web:(A.univers&&A.univers.url)||"",
     secteur_precise: A.secteur===4 ? (W.secteur||"") : null, etablissements_exact: (A.etab===1||A.etab===2)&&A.etabN ? A.etabN+(A.etabN>=50?"+":"") : null, etablissements_communication: A.etabComm!=null ? ["même communication","communication propre à chacun","en partie"][A.etabComm] : null, croissance_visee_pct: A.croissance||null,
     option_seo: seoSel()!=null ? {formule:SEO[seoSel()].n, mensuel_ht:seoPrice(seoSel()).v, prix_public_ht:SEO[seoSel()].p, audit_unique_ht:0, audit:"offert", tarif:seoPriceTxt(seoSel()), formule_reference:F[SEOF].name, statut:"réservée, à activer sur feu vert du référent", rappel_mise_en_place:new Date(Date.now()+122*864e5).toISOString().slice(0,10)} : null, pertinence_seo: seoFit().verdict.t,
@@ -3970,7 +3990,7 @@ async function recapPdf(E,chosen,mode,email){
 }
 
 function sendHook(E,type,extra){
-  if(!CONFIG.webhook) return Promise.resolve(false);
+  if(VIEW || !CONFIG.webhook) return Promise.resolve(false);
   const AU=audit(), ES=estimate(E.rec);
   const body=JSON.stringify({type, ...payload(E,AU,ES,extra||null)});
   return fetch(CONFIG.webhook,{method:"POST",mode:"no-cors",keepalive:body.length<60000,headers:{"Content-Type":"text/plain;charset=UTF-8"},body}).then(()=>true).catch(()=>false);
@@ -4020,6 +4040,14 @@ async function submitContact(E,AU,ES){
     $("#okm").focus(); confetti();
   }
 }
+
+/* Consultation d'un récap partagé (lien du mail ou du tableur) : résultat affiché directement, sans aucun envoi */
+if(VIEW){ document.documentElement.classList.add("view");
+  (async()=>{ try{ const d=await recapRead(); if(!d) throw new Error("lien");
+      A=d.A; W=d.W&&typeof d.W==="object"?d.W:{}; idx=QS.length-1; const E=engine(); buildResult(E); show("result");
+      if(A.id&&A.id.structure) document.title=`Récap AWONE · ${A.id.structure}`;
+      if(/[&#]pdf\b/.test(location.hash.slice(3))){ await new Promise(r=>setTimeout(r,1200)); const rf=$("#rmForm"); if(rf) rf.hidden=false; await recapPdf(E,E.rec,"download"); }
+    }catch(e){ console.warn(e); location.replace(RECAP_BASE); } })(); }
 
 /* Bouton « retour en haut » : visible sur la page résultat après un écran et demi de défilement */
 (function(){ const bt=document.createElement("button"); bt.type="button"; bt.className="totop"; bt.setAttribute("aria-label","Revenir en haut de la page");
