@@ -1927,7 +1927,7 @@ body.sgo-up .totop{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 .est-l li.tot span:last-child{color:#1E6B0B;font-weight:700}
 .pk-price{font-size:clamp(1.35rem,2vw,1.7rem)!important}
 .pk-price s.was{font-size:.75em;color:rgba(255,255,255,.75)}
-.sb-dl{margin:-.3rem 0 1.1rem;padding:.75rem 1rem;border-radius:14px;background:#FFFF7D;color:#0A0A0A;border:2px solid #0A0A0A;font-size:.92rem;font-weight:600;line-height:1.45}
+.sb-dl{display:flex;gap:.6rem;align-items:flex-start;margin:-.3rem 0 1.1rem;padding:.7rem .95rem;border-radius:14px;background:rgba(57,255,106,.12);border:1.5px solid rgba(57,255,106,.55);color:inherit;font-size:.9rem;font-weight:500;line-height:1.5}.sb-dl::before{content:"✦";color:#1FA34A;font-size:1rem;line-height:1.35}.sb-dl b{font-weight:700}
 .y1{display:inline-block;font-size:.62em;font-weight:600;white-space:nowrap;opacity:.85}
 .pk-price b.now{color:#39FF6A;background:#0A0A0A;font-size:1.12em;padding:.06em .5em;border-radius:10px;text-shadow:0 0 12px rgba(57,255,106,.55);border:1.5px solid rgba(57,255,106,.5)}
 .pk-price:not(:has(.pp)){color:#39FF6A;text-shadow:0 0 12px rgba(57,255,106,.4)}
@@ -2370,8 +2370,8 @@ function jourFr(t,an){ const [y,m,d]=ymdParis(t); return `${d===1?"1er":d} ${MOI
 function offreFin(d){ if(!d||!isFinite(d)) return OFFRE_LEGACY_FIN; const [y,m,j]=ymdParis(d); const dim=new Date(Date.UTC(y,m+2,0)).getUTCDate(); return minuitParis(y,m+1,Math.min(j,dim)+1); }
 function offreTxt(){ const o=window.__offre; if(!VIEW||!o||o.expire) return "";
   const dernier=o.fin-12*36e5;
-  return o.legacy?`Tarif garanti jusqu'au ${jourFr(dernier,true)} inclus, pour un démarrage au ${jourFr(o.fin)}. À partir du ${jourFr(o.fin)} à 0 h, la formule passe à 7 000 € HT / mois.`
-    :`Tarif garanti 1 mois à compter de votre bilan, jusqu'au ${jourFr(dernier,true)} inclus. À partir du ${jourFr(o.fin)}, la formule passe à 7 000 € HT / mois.`; }
+  return o.legacy?`<b>Avantage tarifaire maintenu jusqu'au ${jourFr(dernier)} inclus</b>, pour un démarrage au ${jourFr(o.fin)} : vous profitez de ce tarif pendant toute la première année de votre accompagnement.`
+    :`<b>Avantage tarifaire maintenu jusqu'au ${jourFr(dernier)} inclus</b> : vous profitez de ce tarif pendant toute la première année de votre accompagnement.`; }
 function offreAppliquer(d){ const fin=offreFin(d); window.__offre={fin,legacy:!(d&&isFinite(d)),expire:Date.now()>=fin};
   if(window.__offre.expire){ F[1].price=7000; F[1].was=null; F[1].priceTxt="7 000 € HT / mois"; } }
 async function recapLink(){ try{
@@ -3706,7 +3706,7 @@ function buildResult(E){
     const miss = chosen<rec ? E.needs.filter(n=>n.l>chosen&&n.q.vals).sort((a,b)=>b.w-a.w).slice(0,4) : [];
     const pay = CONFIG.paymentLinks[chosen];
     $("#sum").innerHTML=`<p class="sum-k">Votre choix</p><h3 style="--fc:${x.c};--ft:${x.t}"><span>${x.name}</span></h3>
-      <div class="sum-big">${chosen===2?`<span class="sb-n">Sur devis</span><small>à partir de la formule Croissance 360</small>`:`<span class="sb-row">${x.was?`<s class="was sb-was">${x.was}</s>`:""}<span class="sb-n">${eur(x.price)}</span></span><small>HT / mois${x.was?" <b>la première année</b>":""}${e.opt?` · avec vos options : <b>${eur(e.total)} HT / mois</b>`:""}</small>`}</div>${chosen===1&&offreTxt()?`<p class="sb-dl">${offreTxt()}</p>`:""}
+      <div class="sum-big">${chosen===2?`<span class="sb-n">Sur devis</span><small>à partir de la formule Croissance 360</small>`:`<span class="sb-row">${x.was?`<s class="was sb-was">${x.was}</s>`:""}<span class="sb-n">${eur(x.price)}</span></span><small>HT / mois${x.was?" <b>la première année</b>":""}${e.opt?` · avec vos options : <b>${eur(e.total)} HT / mois</b>`:""}</small>`}</div>${chosen===1&&offreTxt()?`<p class="sb-dl"><span>${offreTxt()}</span></p>`:""}
       <ul class="est-l">${e.lines.map(l=>`<li><span>${l[0]}</span><span>${l[1]}</span></li>`).join("")}
         ${e.dv.map(d=>`<li class="dv"><span>${d}</span><span>Sur devis</span></li>`).join("")}
         ${x.was&&x.price?(()=>{ const sv=parseInt(String(x.was).replace(/\D/g,""),10)-x.price; return sv>0?`<li class="save"><span>${eur(sv*12)} économisés la première année</span><span class="sv-m">−${eur(sv)} / mois</span></li>`:""; })():""}
@@ -3961,7 +3961,7 @@ function pdfBlocks(E,chosen){
     ${x.was&&x.price?(()=>{ const sv=parseInt(String(x.was).replace(/\D/g,""),10)-x.price; return sv>0?`<tr class="psv"><td>${eur(sv*12)} économisés la première année</td><td>−${eur(sv)} / mois</td></tr>`:""; })():""}
     <tr class="ptot"><td>Total mensuel${x.was?" (1re année)":""}</td><td>${e.total!=null?eur(e.total)+" HT":"Sur devis"}</td></tr></table>
     ${seoSel()!=null?`<p class="pseo"><b>SEO ${SEO[seoSel()].n}</b> : ${seoPriceTxt(seoSel())}, audit offert. Rien à payer aujourd'hui, rappel sous 4 mois pour sa mise en place.</p>`:""}
-    ${x===F[1]&&offreTxt()?`<p class="pnote"><b>${offreTxt()}</b></p>`:""}
+    ${x===F[1]&&offreTxt()?`<p class="pnote">${offreTxt()}</p>`:""}
     <p class="pnote">Budget publicitaire minimum conseillé : 1 000 € / mois par plateforme (Meta ou Google), versé directement à la plateforme. Abonnements aux outils et nom de domaine à votre charge.</p></div>`});
   if(pi) B.push({h:`<div class="pb"><p class="pk">06 · Ce que comprend ${x.name} chaque mois</p><ul class="pin">${pi.base.map(b=>`<li>${b}</li>`).join("")}${pi.add.map(b=>`<li class="add">${b}</li>`).join("")}</ul></div>`});
   B.push({h:`<div class="pb pb-yel"><p class="pk">Et maintenant</p><ol class="pns"><li><b>Vous validez votre formule</b>  : paiement de démarrage de ${CONFIG.startFee}, déduits de votre première mensualité.</li><li><b>Rendez-vous avec l'équipe AWONE sous 72 h</b> : nous lançons la mise en place de votre projet.</li><li><b>Vos prochaines étapes, noir sur blanc</b> à l'issue de ce premier rendez-vous.</li><li><b>C'est parti</b> : audit complet, puis votre plan d'action sur 12 mois.</li></ol>
