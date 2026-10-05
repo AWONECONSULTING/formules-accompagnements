@@ -2362,27 +2362,29 @@ async function pipeBytes(u8,stream){ return new Uint8Array(await new Response(ne
    Lien daté (d = date du chiffrage) : 5 850 € garantis 1 mois, jusqu'au même jour du mois suivant inclus.
    Lien sans date (créés avant cette règle, dont FREEDOM BOAT CLUB chiffré le 2 octobre) : jusqu'au 31 octobre 2026 inclus.
    Passé ce délai, le récap affiche automatiquement 7 000 € HT / mois. */
-const OFFRE_LEGACY_FIN=Date.parse("2026-11-01T00:00:00+01:00");
+const OFFRE_LEGACY_FIN=Date.parse("2026-11-01T00:00:00+01:00"), OFFRE_REGLE=Date.parse("2026-10-05T00:00:00+02:00");
+/* Date du premier passage sur le formulaire : gardée même si le formulaire est recommencé (le serveur applique aussi sa propre date) */
+function premierChiffrage(){ let t=0; try{ t=+localStorage.getItem("aw-t0")||0; if(!t){ t=Date.now(); localStorage.setItem("aw-t0",String(t)); } }catch(e){ t=window.__t0||(window.__t0=Date.now()); } return t; }
 const MOIS_FR=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
 function ymdParis(t){ const p={}; new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Paris",year:"numeric",month:"numeric",day:"numeric"}).formatToParts(new Date(t)).forEach(x=>p[x.type]=+x.value); return [p.year,p.month-1,p.day]; }
 function minuitParis(y,m,d){ for(const off of [1,2]){ const t=Date.UTC(y,m,d,0)-off*36e5; const h=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Paris",hour:"2-digit",hourCycle:"h23"}).format(new Date(t)); if(+h===0) return t; } return Date.UTC(y,m,d)-36e5; }
 function jourFr(t,an){ const [y,m,d]=ymdParis(t); return `${d===1?"1er":d} ${MOIS_FR[m]}${an?" "+y:""}`; }
-function offreFin(d){ if(!d||!isFinite(d)) return OFFRE_LEGACY_FIN; const [y,m,j]=ymdParis(d); const dim=new Date(Date.UTC(y,m+2,0)).getUTCDate(); return minuitParis(y,m+1,Math.min(j,dim)+1); }
+function offreFin(d){ if(!d||!isFinite(d)||d<OFFRE_REGLE) return OFFRE_LEGACY_FIN; const [y,m,j]=ymdParis(d); const dim=new Date(Date.UTC(y,m+2,0)).getUTCDate(); return minuitParis(y,m+1,Math.min(j,dim)+1); }
 function offreTxt(){ const o=window.__offre; if(!VIEW||!o||o.expire) return "";
   const dernier=o.fin-12*36e5;
-  return o.legacy?`<b>Avantage tarifaire maintenu jusqu'au ${jourFr(dernier)} inclus</b>, pour un démarrage au ${jourFr(o.fin)} : ce tarif vous est garanti tout au long de votre première année d'accompagnement.`
-    :`<b>Avantage tarifaire maintenu jusqu'au ${jourFr(dernier)} inclus</b> : ce tarif vous est garanti tout au long de votre première année d'accompagnement.`; }
-function offreAppliquer(d){ const fin=offreFin(d); window.__offre={fin,legacy:!(d&&isFinite(d)),expire:Date.now()>=fin};
+  const tete=`<b>Avantage tarifaire maintenu jusqu'au ${jourFr(dernier)} inclus</b>, et ce tout au long de votre première année d'accompagnement.`;
+  return o.legacy?`${tete}<br>Pour un démarrage au ${jourFr(o.fin)}.`:tete; }
+function offreAppliquer(d){ const fin=offreFin(d); window.__offre={fin,legacy:fin===OFFRE_LEGACY_FIN,expire:Date.now()>=fin};
   if(window.__offre.expire){ F[1].price=7000; F[1].was=null; F[1].priceTxt="7 000 € HT / mois"; } }
 async function recapLink(){ try{
   const a=JSON.parse(JSON.stringify(A)); delete a.sid; if(a.id){ delete a.id.email; delete a.id.tel; } if(a.univers) delete a.univers.logo;
-  const raw=new TextEncoder().encode(JSON.stringify({v:1,d:window.__recapT||(window.__recapT=Date.now()),A:a,W}));
-  if(window.CompressionStream){ try{ return RECAP_BASE+"#r=z."+b64u.enc(await pipeBytes(raw,new CompressionStream("deflate-raw"))); }catch(e){} }
+  const raw=new TextEncoder().encode(JSON.stringify({v:1,d:premierChiffrage(),A:a,W}));
+  /* format "j." (non compressé) : le serveur peut y réécrire la date du premier chiffrage */
   return RECAP_BASE+"#r=j."+b64u.enc(raw); }catch(e){ return ""; } }
 async function recapRead(){ const m=location.hash.match(/^#r=([jz])\.([A-Za-z0-9_-]+)/); if(!m) return null;
   let u=b64u.dec(m[2]); if(m[1]==="z") u=await pipeBytes(u,new DecompressionStream("deflate-raw"));
   const d=JSON.parse(new TextDecoder().decode(u)); return d&&d.A&&typeof d.A==="object"?d:null; }
-function saveState(){ if(VIEW) return; try{ const a2=JSON.parse(JSON.stringify(A)); if(a2.univers&&a2.univers.logo&&a2.univers.logo.size>1.5e6) delete a2.univers.logo; localStorage.setItem(SAVE,JSON.stringify({A:a2,W,idx,done:!!(arguments[0]&&arguments[0].done),t:Date.now()})); }catch(e){} }
+function saveState(){ if(VIEW) return; premierChiffrage(); try{ const a2=JSON.parse(JSON.stringify(A)); if(a2.univers&&a2.univers.logo&&a2.univers.logo.size>1.5e6) delete a2.univers.logo; localStorage.setItem(SAVE,JSON.stringify({A:a2,W,idx,done:!!(arguments[0]&&arguments[0].done),t:Date.now()})); }catch(e){} }
 function clearState(){ try{ localStorage.removeItem(SAVE); }catch(e){} }
 function loadState(){ try{ const d=JSON.parse(localStorage.getItem(SAVE)||"null"); if(d&&d.A&&Number.isInteger(d.idx)&&d.idx>=0&&d.idx<QS.length&&(d.idx>0||d.done||Object.keys(d.A).length)&&Date.now()-d.t<30*864e5) return d; }catch(e){} return null; }
 /* ---------- Réglages d'accessibilité ---------- */
